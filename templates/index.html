@@ -1,0 +1,3044 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CapCut Project Manager</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-base:      #111214;
+            --bg-panel:     #18191d;
+            --bg-card:      #1f2127;
+            --bg-hover:     #252830;
+            --bg-active:    #2a2d38;
+            --border:       #2e3140;
+            --border-light: #383c50;
+            --accent:       #00cfc0;
+            --accent-dim:   rgba(0,207,192,.15);
+            --accent-glow:  rgba(0,207,192,.35);
+            --accent2:      #7c6ee6;
+            --accent2-dim:  rgba(124,110,230,.15);
+            --text-primary: #eceef4;
+            --text-secondary:#9da3b8;
+            --text-muted:   #5a6080;
+            --success:      #22c985;
+            --success-dim:  rgba(34,201,133,.12);
+            --error:        #f05060;
+            --error-dim:    rgba(240,80,96,.12);
+            --warning:      #f5a623;
+            --warning-dim:  rgba(245,166,35,.12);
+            --sidebar-w:    64px;
+        }
+
+        /* Light theme */
+        [data-theme="light"] {
+            --bg-base:      #f8f9fa;
+            --bg-panel:     #ffffff;
+            --bg-card:      #ffffff;
+            --bg-hover:     #f1f3f4;
+            --bg-active:    #e8eaed;
+            --border:       #dadce0;
+            --border-light: #e0e0e0;
+            --accent:       #00cfc0;
+            --accent-dim:   rgba(0,207,192,.15);
+            --accent-glow:  rgba(0,207,192,.35);
+            --accent2:      #7c6ee6;
+            --accent2-dim:  rgba(124,110,230,.15);
+            --text-primary: #202124;
+            --text-secondary:#5f6368;
+            --text-muted:   #9aa0a6;
+            --success:      #22c985;
+            --success-dim:  rgba(34,201,133,.12);
+            --error:        #f05060;
+            --error-dim:    rgba(240,80,96,.12);
+            --warning:      #f5a623;
+            --warning-dim:  rgba(245,166,35,.12);
+            --sidebar-w:    64px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: var(--bg-base);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* ─── TOP BAR ─────────────────────────────────────────────── */
+        .topbar {
+            height: 48px;
+            background: var(--bg-panel);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            padding: 0 16px;
+            gap: 12px;
+            flex-shrink: 0;
+            position: relative;
+            z-index: 100;
+        }
+        .topbar-logo {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 800;
+            font-size: 15px;
+            letter-spacing: -.3px;
+            color: var(--text-primary);
+        }
+        .topbar-logo .logo-icon {
+            width: 36px; height: 36px;
+            border-radius: 9px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 25px;
+            margin-right: 10px;
+        }
+        .topbar-logo .logo-icon i {
+            color: var(--text-primary);
+        }
+        .topbar-divider { width: 1px; height: 20px; background: var(--border); }
+        .topbar-title {
+            font-size: 13px;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+        .topbar-spacer { flex: 1; }
+
+        /* Mode switcher */
+        .mode-switcher {
+            display: flex;
+            background: var(--bg-base);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 3px;
+            gap: 2px;
+        }
+        .mode-btn {
+            padding: 5px 14px;
+            border-radius: 6px;
+            border: none;
+            background: transparent;
+            color: var(--text-secondary);
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all .2s;
+            display: flex; align-items: center; gap: 6px;
+            font-family: inherit;
+        }
+        .mode-btn.active {
+            background: var(--accent);
+            color: #000;
+        }
+        .mode-btn:not(.active):hover { background: var(--bg-hover); color: var(--text-primary); }
+
+        .topbar-version {
+            background: var(--accent-dim);
+            color: var(--accent);
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            border: 1px solid var(--accent);
+        }
+
+        .topbar-action {
+            display: flex; align-items: center; gap: 6px;
+            padding: 6px 16px;
+            background: linear-gradient(135deg, var(--accent), #00a8ff);
+            border: none;
+            border-radius: 8px;
+            color: #000;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: opacity .2s, transform .15s;
+            font-family: inherit;
+        }
+        .topbar-action:hover { opacity: .88; transform: translateY(-1px); }
+
+        /* ─── LAYOUT ───────────────────────────────────────────────── */
+        .app-body {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        /* ─── SIDEBAR ──────────────────────────────────────────────── */
+        .sidebar {
+            width: var(--sidebar-w);
+            background: var(--bg-panel);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 12px 0;
+            gap: 4px;
+            flex-shrink: 0;
+        }
+        .sidebar-icon {
+            width: 40px; height: 40px;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            gap: 3px;
+            border-radius: 10px;
+            cursor: pointer;
+            color: var(--text-muted);
+            transition: all .2s;
+            font-size: 16px;
+            position: relative;
+        }
+        .sidebar-icon span { font-size: 9px; font-weight: 600; line-height: 1; }
+        .sidebar-icon:hover { color: var(--text-primary); background: var(--bg-hover); }
+        .sidebar-icon.active { color: var(--accent); background: var(--accent-dim); }
+        .sidebar-icon.active::before {
+            content: '';
+            position: absolute;
+            left: 0; top: 50%;
+            transform: translateY(-50%);
+            width: 3px; height: 24px;
+            background: var(--accent);
+            border-radius: 0 3px 3px 0;
+        }
+        .sidebar-sep { width: 32px; height: 1px; background: var(--border); margin: 4px 0; }
+
+        /* ─── MAIN CONTENT ─────────────────────────────────────────── */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* Content toolbar */
+        .content-toolbar {
+            height: 48px;
+            background: var(--bg-panel);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+            gap: 12px;
+            flex-shrink: 0;
+        }
+        .toolbar-title {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+        .toolbar-spacer { flex: 1; }
+        .toolbar-btn {
+            display: flex; align-items: center; gap: 6px;
+            padding: 6px 12px;
+            border-radius: 7px;
+            border: 1px solid var(--border);
+            background: transparent;
+            color: var(--text-secondary);
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all .18s;
+            font-family: inherit;
+        }
+        .toolbar-btn:hover { background: var(--bg-hover); border-color: var(--border-light); color: var(--text-primary); }
+        .toolbar-btn.primary {
+            background: var(--accent-dim);
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+        .toolbar-btn.primary:hover { background: var(--accent); color: #000; }
+
+        /* Scroll area */
+        .scroll-area {
+            flex: 1;
+            overflow-y: auto;
+            overflow-x: hidden;
+            padding: 24px;
+            max-height: calc(100vh - 96px); /* viewport height minus topbar and toolbar */
+        }
+        .scroll-area::-webkit-scrollbar { 
+            width: 8px; 
+        }
+        .scroll-area::-webkit-scrollbar-track { 
+            background: transparent; 
+        }
+        .scroll-area::-webkit-scrollbar-thumb { 
+            background: var(--border); 
+            border-radius: 4px;
+        }
+        .scroll-area::-webkit-scrollbar-thumb:hover {
+            background: var(--border-light);
+        }
+
+        /* ─── CONTEXT MENU ───────────────────────────────────────── */
+        .context-menu {
+            position: fixed;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 4px 0;
+            min-width: 180px;
+            box-shadow: 0 8px 32px rgba(0,0,0,.3);
+            z-index: 10000;
+            display: none;
+        }
+        .context-menu-item {
+            padding: 8px 16px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 13px;
+            color: var(--text-primary);
+            transition: all .2s;
+        }
+        .context-menu-item:hover {
+            background: var(--bg-hover);
+        }
+        .context-menu-item i {
+            width: 16px;
+            text-align: center;
+            color: var(--text-secondary);
+        }
+        .context-menu-item.danger {
+            color: var(--error);
+        }
+        .context-menu-item.danger i {
+            color: var(--error);
+        }
+        .context-menu-separator {
+            height: 1px;
+            background: var(--border);
+            margin: 4px 0;
+        }
+
+        /* ─── SECTION STATES ───────────────────────────────────────── */
+        .mode-section { display: block; }
+        .mode-section.hidden { display: none; }
+
+        /* ─── LOADING / EMPTY ──────────────────────────────────────── */
+        .state-box {
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            padding: 72px 24px;
+            gap: 16px;
+            color: var(--text-muted);
+        }
+        .state-box .icon-wrap {
+            width: 64px; height: 64px;
+            border-radius: 18px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 24px;
+            color: var(--text-muted);
+        }
+        .state-box h3 { font-size: 15px; font-weight: 700; color: var(--text-secondary); }
+        .state-box p { font-size: 13px; color: var(--text-muted); text-align: center; max-width: 280px; line-height: 1.6; }
+        .spin { animation: spin 1s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* ─── PROJECT GRID ─────────────────────────────────────────── */
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 14px;
+        }
+
+        .project-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: border-color .2s, transform .2s, box-shadow .2s;
+        }
+        .project-card:hover {
+            border-color: var(--accent);
+            transform: translateY(-3px);
+            box-shadow: 0 12px 32px rgba(0,0,0,.4), 0 0 0 1px var(--accent-glow);
+        }
+        .card-thumb {
+            height: 120px;
+            background: linear-gradient(135deg, #1a1d28, #242838);
+            display: flex; align-items: center; justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .card-thumb::before {
+            content: '';
+            position: absolute; inset: 0;
+            background: repeating-linear-gradient(
+                45deg,
+                transparent,
+                transparent 20px,
+                rgba(255,255,255,.012) 20px,
+                rgba(255,255,255,.012) 40px
+            );
+        }
+        .card-thumb-icon {
+            font-size: 32px;
+            color: rgba(255,255,255,.12);
+        }
+        .card-duration {
+            position: absolute;
+            bottom: 8px; right: 8px;
+            background: rgba(0,0,0,.72);
+            color: #fff;
+            font-size: 10px;
+            font-weight: 700;
+            padding: 3px 7px;
+            border-radius: 5px;
+            letter-spacing: .4px;
+        }
+        .card-body { padding: 12px 14px 14px; }
+        .card-name {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .card-meta {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 12px;
+        }
+        .card-tag {
+            display: flex; align-items: center; gap: 4px;
+            font-size: 11px;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+        .card-tag i { font-size: 10px; color: var(--accent); }
+        .card-export-btn {
+            width: 100%;
+            padding: 8px;
+            border-radius: 8px;
+            border: none;
+            background: var(--accent-dim);
+            color: var(--accent);
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all .2s;
+            font-family: inherit;
+            display: flex; align-items: center; justify-content: center; gap: 6px;
+        }
+        .card-export-btn:hover { background: var(--accent); color: #000; }
+
+        /* ─── IMPORT PANEL ─────────────────────────────────────────── */
+        .import-panel {
+            max-width: 720px;
+            margin: 0 auto;
+        }
+        .panel-section {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 22px 24px;
+            margin-bottom: 14px;
+        }
+        .panel-section-title {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: .8px;
+            margin-bottom: 16px;
+            display: flex; align-items: center; gap: 8px;
+        }
+        .panel-section-title i { color: var(--accent); }
+
+        .cc-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+            display: block;
+        }
+        .cc-input {
+            width: 100%;
+            padding: 10px 14px;
+            background: var(--bg-base);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 13px;
+            font-family: inherit;
+            transition: border-color .2s;
+            outline: none;
+        }
+        .cc-input:focus { border-color: var(--accent); }
+        .cc-input::placeholder { color: var(--text-muted); }
+
+        .cc-select {
+            width: 100%;
+            padding: 10px 14px;
+            background: var(--bg-base);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 13px;
+            font-family: inherit;
+            outline: none;
+            appearance: none;
+            cursor: pointer;
+        }
+        .cc-select:focus { border-color: var(--accent); }
+        .cc-select option { background: var(--bg-card); }
+
+        .input-row {
+            display: flex; gap: 8px;
+        }
+        .input-row .cc-input { flex: 1; }
+
+        .cc-btn {
+            padding: 10px 18px;
+            border-radius: 8px;
+            border: none;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all .2s;
+            font-family: inherit;
+            display: flex; align-items: center; gap: 7px;
+            white-space: nowrap;
+        }
+        .cc-btn-outline {
+            background: var(--bg-base);
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+        }
+        .cc-btn-outline:hover { border-color: var(--accent); color: var(--accent); }
+
+        .cc-btn-accent {
+            background: var(--accent);
+            color: #000;
+        }
+        .cc-btn-accent:hover { opacity: .85; }
+
+        .cc-btn-blue {
+            background: #1e6fff;
+            color: #fff;
+        }
+        .cc-btn-blue:hover { background: #1a5fe0; }
+
+        .cc-btn-green {
+            background: var(--success);
+            color: #000;
+        }
+        .cc-btn-green:hover { opacity: .85; }
+
+        .cc-btn-ghost {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text-muted);
+        }
+        .cc-btn-ghost:hover { background: var(--bg-hover); color: var(--text-primary); }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+        }
+
+        .toggle-group {
+            display: flex; gap: 8px;
+        }
+        .toggle-opt {
+            flex: 1;
+            padding: 9px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-muted);
+            transition: all .2s;
+        }
+        .toggle-opt:hover { border-color: var(--border-light); color: var(--text-secondary); }
+        .toggle-opt.active {
+            border-color: var(--accent);
+            background: var(--accent-dim);
+            color: var(--accent);
+        }
+        .toggle-opt i { display: block; font-size: 14px; margin-bottom: 4px; }
+
+        /* ─── INFO BOXES ───────────────────────────────────────────── */
+        .info-box {
+            border-radius: 10px;
+            padding: 14px 16px;
+            margin-bottom: 12px;
+        }
+        .info-box.blue {
+            background: rgba(30,111,255,.1);
+            border: 1px solid rgba(30,111,255,.25);
+        }
+        .info-box.green {
+            background: var(--success-dim);
+            border: 1px solid rgba(34,201,133,.25);
+        }
+        .info-box.red {
+            background: var(--error-dim);
+            border: 1px solid rgba(240,80,96,.25);
+        }
+        .info-box.yellow {
+            background: var(--warning-dim);
+            border: 1px solid rgba(245,166,35,.25);
+        }
+        .info-box-title {
+            font-size: 12px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            display: flex; align-items: center; gap: 6px;
+        }
+        .info-box.blue .info-box-title { color: #6fa3ff; }
+        .info-box.green .info-box-title { color: var(--success); }
+        .info-box.red .info-box-title { color: var(--error); }
+        .info-box.yellow .info-box-title { color: var(--warning); }
+        .info-box-content { font-size: 12px; color: var(--text-secondary); line-height: 1.6; }
+        .info-row { display: flex; justify-content: space-between; padding: 3px 0; }
+        .info-row .label { color: var(--text-muted); }
+        .info-row .value { color: var(--text-primary); font-weight: 600; }
+
+        /* ─── PROGRESS ─────────────────────────────────────────────── */
+        .progress-track {
+            height: 6px;
+            background: var(--bg-base);
+            border-radius: 100px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent), #00a8ff);
+            border-radius: 100px;
+            transition: width .4s cubic-bezier(.4,0,.2,1);
+        }
+        .progress-header {
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .progress-label { font-size: 12px; font-weight: 600; color: var(--text-secondary); }
+        .progress-pct { font-size: 12px; font-weight: 800; color: var(--accent); }
+
+        .progress-details-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            padding: 12px;
+            background: var(--bg-base);
+            border-radius: 8px;
+            margin-top: 10px;
+        }
+        .detail-item .detail-key { font-size: 10px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: .5px; }
+        .detail-item .detail-val { font-size: 12px; color: var(--text-primary); font-weight: 600; margin-top: 2px; }
+
+        /* ─── MODAL ────────────────────────────────────────────────── */
+        .modal-overlay {
+            position: fixed; inset: 0;
+            background: rgba(0,0,0,.72);
+            display: flex; align-items: center; justify-content: center;
+            z-index: 1000;
+            backdrop-filter: blur(4px);
+        }
+        .modal-overlay.hidden { display: none; }
+        .modal-box {
+            background: var(--bg-panel);
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            width: 100%;
+            max-width: 560px;
+            margin: 16px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 32px 80px rgba(0,0,0,.6);
+        }
+        .modal-box::-webkit-scrollbar { width: 4px; }
+        .modal-box::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
+        .modal-header {
+            padding: 20px 24px 16px;
+            border-bottom: 1px solid var(--border);
+            display: flex; align-items: center; justify-content: space-between;
+        }
+        .modal-header-left { display: flex; flex-direction: column; gap: 4px; }
+        .modal-header-title { font-size: 15px; font-weight: 800; color: var(--text-primary); }
+        .modal-header-sub { font-size: 12px; color: var(--text-muted); }
+        .modal-close {
+            width: 30px; height: 30px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            background: transparent;
+            color: var(--text-muted);
+            cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 13px;
+            transition: all .18s;
+        }
+        .modal-close:hover { background: var(--error-dim); border-color: var(--error); color: var(--error); }
+        .modal-body { padding: 20px 24px; display: flex; flex-direction: column; gap: 18px; }
+        .modal-footer {
+            padding: 16px 24px;
+            border-top: 1px solid var(--border);
+            display: flex; align-items: center; justify-content: space-between;
+            gap: 10px;
+        }
+
+        /* ─── TOAST ────────────────────────────────────────────────── */
+        .toast-container {
+            position: fixed;
+            bottom: 24px; right: 24px;
+            z-index: 2000;
+            display: flex; flex-direction: column; gap: 8px;
+        }
+        #toast {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 12px 16px;
+            box-shadow: 0 16px 40px rgba(0,0,0,.5);
+            display: flex; align-items: flex-start; gap: 12px;
+            min-width: 280px;
+            max-width: 380px;
+            animation: slideUp .3s cubic-bezier(.4,0,.2,1);
+        }
+        #toast.hidden { display: none; }
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(16px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .toast-icon { font-size: 18px; margin-top: 1px; flex-shrink: 0; }
+        .toast-title { font-size: 13px; font-weight: 700; color: var(--text-primary); }
+        .toast-msg { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+
+        /* ─── BADGE ────────────────────────────────────────────────── */
+        .badge {
+            display: inline-flex; align-items: center; gap: 4px;
+            padding: 3px 8px;
+            border-radius: 6px;
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: .3px;
+        }
+        .badge-accent { background: var(--accent-dim); color: var(--accent); }
+        .badge-purple { background: var(--accent2-dim); color: var(--accent2); }
+        .badge-green { background: var(--success-dim); color: var(--success); }
+        .badge-red { background: var(--error-dim); color: var(--error); }
+
+        /* ─── ANIM ─────────────────────────────────────────────────── */
+        .fade-in { animation: fadeIn .35s ease; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ─── STATUS PILL ──────────────────────────────────────────── */
+        .status-row {
+            display: flex; align-items: center; gap: 8px;
+            padding: 8px 12px;
+            border-radius: 8px;
+            background: var(--bg-base);
+            border: 1px solid var(--border);
+            font-size: 12px;
+        }
+        .status-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+
+        /* ─── MISC ─────────────────────────────────────────────────── */
+        .hidden { display: none !important; }
+        .section-header {
+            display: flex; align-items: center; justify-content: space-between;
+            margin-bottom: 18px;
+        }
+        .section-header-left { display: flex; align-items: center; gap: 10px; }
+        .section-icon {
+            width: 34px; height: 34px;
+            border-radius: 10px;
+            background: var(--accent-dim);
+            display: flex; align-items: center; justify-content: center;
+            color: var(--accent);
+            font-size: 14px;
+        }
+        .section-title { font-size: 15px; font-weight: 800; color: var(--text-primary); }
+        .section-count { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+        .section-header-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .search-container {
+            display: flex;
+            align-items: center;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 6px 12px;
+            min-width: 200px;
+        }
+        .search-container input {
+            background: transparent;
+            border: none;
+            outline: none;
+            color: var(--text-primary);
+            font-size: 13px;
+            width: 100%;
+            margin-left: 8px;
+        }
+        .search-container input::placeholder {
+            color: var(--text-muted);
+        }
+        .search-icon {
+            color: var(--text-muted);
+            font-size: 12px;
+        }
+
+        /* ─── RESPONSIVE ───────────────────────────────────────────── */
+        @media (max-width: 640px) {
+            .form-grid { grid-template-columns: 1fr; }
+            .projects-grid { grid-template-columns: 1fr 1fr; }
+            .sidebar { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ════ TOP BAR ════════════════════════════════════════════════════ -->
+<div class="topbar">
+    <div class="topbar-logo">
+        <div class="logo-icon"><i class="fas fa-film"></i></div>
+        <span>CapCut Manager</span>
+    </div>
+    <div class="topbar-divider"></div>
+    <span class="topbar-title">Gestionnaire de projets</span>
+    <div class="topbar-spacer"></div>
+
+    <span class="topbar-version">v1.0.0</span>
+</div>
+
+<!-- ════ APP BODY ════════════════════════════════════════════════════ -->
+<div class="app-body">
+
+    <!-- ── SIDEBAR ────────────────────────────────────────────────── -->
+    <nav class="sidebar">
+        <div class="sidebar-icon active" title="Projets" onclick="setMode('export')">
+            <i class="fas fa-th-large"></i>
+            <span>Projets</span>
+        </div>
+        <div class="sidebar-icon" title="Importer" onclick="setMode('import')">
+            <i class="fas fa-upload"></i>
+            <span>Import</span>
+        </div>
+        <div class="sidebar-icon" title="Paramètres" onclick="showSettings()">
+            <i class="fas fa-cog"></i>
+            <span>Params</span>
+        </div>
+        <div class="sidebar-sep"></div>
+        <div class="sidebar-icon" title="Diagnostic" onclick="diagnoseInstallation()">
+            <i class="fas fa-stethoscope"></i>
+            <span>Diag</span>
+        </div>
+        <div class="sidebar-icon" title="Rafraîchir" onclick="loadProjects()">
+            <i class="fas fa-redo-alt"></i>
+            <span>Sync</span>
+        </div>
+    </nav>
+
+    <!-- ── MAIN ───────────────────────────────────────────────────── -->
+    <div class="main-content">
+
+        <!-- ─ EXPORT MODE ─────────────────────────────────────────── -->
+        <div id="exportMode" class="mode-section">
+
+            <div class="scroll-area">
+                <!-- LOADING -->
+                <div id="loadingState">
+                    <div class="state-box">
+                        <div class="icon-wrap">
+                            <i class="fas fa-spinner spin" style="color:var(--accent);"></i>
+                        </div>
+                        <h3>Recherche des projets…</h3>
+                        <p>Détection automatique des projets CapCut installés sur votre machine.</p>
+                    </div>
+                </div>
+
+                <!-- PROJECTS CONTAINER -->
+                <div id="projectsContainer" class="hidden fade-in">
+                    <div class="section-header">
+                        <div class="section-header-left">
+                            <div>
+                                <div class="section-title">Projets détectés</div>
+                                <div class="section-count" id="projectCount">— projets trouvés</div>
+                            </div>
+                        </div>
+                        <div class="section-header-right">
+                            <div class="search-container">
+                                <i class="fas fa-search search-icon"></i>
+                                <input type="text" id="projectSearch" placeholder="Rechercher des projets..." onkeyup="filterProjects()">
+                            </div>
+                            <span class="badge badge-accent"><i class="fas fa-circle" style="font-size:6px;"></i> Synchronisé</span>
+                        </div>
+                    </div>
+                    <div id="projectsGrid" class="projects-grid"></div>
+                </div>
+
+                <!-- NO PROJECTS -->
+                <div id="noProjectsState" class="hidden">
+                    <div class="state-box">
+                        <div class="icon-wrap"><i class="fas fa-folder-open"></i></div>
+                        <h3>Aucun projet trouvé</h3>
+                        <p>Assurez-vous que CapCut est installé et que vous avez créé des projets.</p>
+                        <button class="cc-btn cc-btn-accent" onclick="loadProjects()">
+                            <i class="fas fa-sync-alt"></i> Réessayer
+                        </button>
+                    </div>
+                </div>
+
+                <!-- DIAGNOSTIC INFO (initially hidden) -->
+                <div id="diagnosticInfo" class="hidden fade-in" style="margin-top:20px;">
+                    <div class="panel-section">
+                        <div class="panel-section-title"><i class="fas fa-stethoscope"></i> Diagnostic système</div>
+                        <div class="info-box blue">
+                            <div class="info-box-title"><i class="fas fa-desktop"></i> Informations système</div>
+                            <div class="info-box-content" id="systemInfo"></div>
+                        </div>
+                        <div id="issuesList" class="hidden">
+                            <div class="info-box red">
+                                <div class="info-box-title"><i class="fas fa-times-circle"></i> Problèmes détectés</div>
+                                <div class="info-box-content" id="issuesContent"></div>
+                            </div>
+                        </div>
+                        <div id="notesList" class="hidden">
+                            <div class="info-box yellow">
+                                <div class="info-box-title"><i class="fas fa-info-circle"></i> Notes</div>
+                                <div class="info-box-content" id="notesContent"></div>
+                            </div>
+                        </div>
+                        <div id="recommendationsList" class="hidden">
+                            <div class="info-box green" style="margin-bottom:0;">
+                                <div class="info-box-title"><i class="fas fa-lightbulb"></i> Recommandations</div>
+                                <div class="info-box-content" id="recommendationsContent"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ─ IMPORT MODE ─────────────────────────────────────────── -->
+        <div id="importMode" class="mode-section hidden">
+            <div class="content-toolbar">
+                <div class="section-icon" style="background:var(--accent2-dim);color:var(--accent2);">
+                    <i class="fas fa-file-import"></i>
+                </div>
+                <span class="toolbar-title">Importer un projet</span>
+                <div class="toolbar-spacer"></div>
+                <button class="toolbar-btn" onclick="resetImportInterface()">
+                    <i class="fas fa-undo"></i> Réinitialiser
+                </button>
+            </div>
+
+            <div class="scroll-area">
+                <div class="import-panel">
+
+                    <!-- Source -->
+                    <div class="panel-section fade-in">
+                        <div class="panel-section-title"><i class="fas fa-file-archive"></i> Source du projet</div>
+                        <label class="cc-label">Fichier ZIP ou dossier</label>
+                        <div class="input-row" style="margin-bottom:14px;">
+                            <input type="text" id="importSourcePath" class="cc-input" placeholder="Chemin vers le fichier ZIP ou dossier…">
+                            <button class="cc-btn cc-btn-outline" onclick="browseImportSource()">
+                                <i class="fas fa-folder-open"></i>
+                            </button>
+                        </div>
+                        <button class="cc-btn cc-btn-blue" style="width:100%;" onclick="analyzeImportSource()">
+                            <i class="fas fa-search"></i> Analyser la source
+                        </button>
+                    </div>
+
+                    <!-- Analysis -->
+                    <div id="importAnalysis" class="hidden fade-in">
+                        <div class="panel-section">
+                            <div class="panel-section-title"><i class="fas fa-info-circle"></i> Informations du projet</div>
+                            <div id="importAnalysisContent" class="info-box blue">
+                                <div class="info-box-title"><i class="fas fa-folder"></i> Détails détectés</div>
+                                <div class="info-box-content"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Config -->
+                    <div id="importConfig" class="hidden fade-in">
+                        <div class="panel-section">
+                            <div class="panel-section-title"><i class="fas fa-cog"></i> Configuration</div>
+                            <div class="form-grid">
+                                <div>
+                                    <label class="cc-label">Nom du projet</label>
+                                    <input type="text" id="importProjectName" class="cc-input" placeholder="Nom du projet…">
+                                </div>
+                                <div>
+                                    <label class="cc-label">Emplacement des médias</label>
+                                    <select id="importMediaLocation" class="cc-select">
+                                        <option value="">Choisir un emplacement…</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div id="customMediaPathSection" class="hidden" style="margin-top:12px;">
+                                <label class="cc-label">Chemin personnalisé</label>
+                                <div class="input-row">
+                                    <input type="text" id="customMediaPath" class="cc-input" placeholder="Chemin personnalisé…">
+                                    <button class="cc-btn cc-btn-outline" onclick="browseMediaLocation()">
+                                        <i class="fas fa-folder-open"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Start Import -->
+                    <div id="importStartSection" class="hidden fade-in">
+                        <div class="panel-section" style="padding:16px 24px;">
+                            <button class="cc-btn cc-btn-green" style="width:100%;" onclick="startImportProcess()">
+                                <i class="fas fa-play"></i> Démarrer l'import
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Import Progress -->
+                    <div id="importProgress" class="hidden fade-in">
+                        <div class="panel-section">
+                            <div class="panel-section-title"><i class="fas fa-cog spin"></i> Import en cours…</div>
+                            <div class="progress-header">
+                                <span class="progress-label" id="importProgressText">Préparation…</span>
+                                <span class="progress-pct" id="importProgressPercent">0%</span>
+                            </div>
+                            <div class="progress-track">
+                                <div class="progress-fill" id="importProgressBar" style="width:0%;background:linear-gradient(90deg,var(--accent2),var(--accent));"></div>
+                            </div>
+                            <div class="status-row" style="margin-top:8px;">
+                                <div class="status-dot" style="background:var(--accent);animation:pulse 1.4s ease infinite;"></div>
+                                <span id="importCurrentStage" style="font-size:12px;color:var(--text-secondary);">Initialisation</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Import Result -->
+                    <div id="importResult" class="hidden fade-in">
+                        <div class="panel-section">
+                            <div class="info-box green" style="margin-bottom:14px;">
+                                <div class="info-box-title"><i class="fas fa-check-circle"></i> Import réussi !</div>
+                                <div id="importResultContent" class="info-box-content"></div>
+                            </div>
+                            <div style="display:flex;gap:10px;">
+                                <button class="cc-btn cc-btn-accent" style="flex:1;" onclick="openImportedProject()">
+                                    <i class="fas fa-folder-open"></i> Ouvrir le projet
+                                </button>
+                                <button class="cc-btn cc-btn-ghost" style="flex:1;" onclick="resetImportInterface()">
+                                    <i class="fas fa-plus"></i> Nouvel import
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- ─ SETTINGS MODE ─────────────────────────────────────────── -->
+        <div id="settingsMode" class="mode-section hidden">
+            <div class="content-toolbar">
+                <div class="section-icon" style="background:var(--warning-dim);color:var(--warning);">
+                    <i class="fas fa-cog"></i>
+                </div>
+                <span class="toolbar-title">Paramètres</span>
+                <div class="toolbar-spacer"></div>
+                <button class="toolbar-btn primary" onclick="saveSettings()">
+                    <i class="fas fa-save"></i> Sauvegarder
+                </button>
+            </div>
+
+            <div class="scroll-area">
+                <div class="import-panel">
+
+                    <!-- General Settings -->
+                    <div class="panel-section fade-in">
+                        <div class="panel-section-title"><i class="fas fa-sliders-h"></i> Paramètres généraux</div>
+                        
+                        <div class="form-grid">
+                            <div>
+                                <label class="cc-label">Langue</label>
+                                <select id="settingsLanguage" class="cc-select">
+                                    <option value="fr">Français</option>
+                                    <option value="en">English</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="cc-label">Thème</label>
+                                <select id="settingsTheme" class="cc-select">
+                                    <option value="dark">Sombre</option>
+                                    <option value="light">Clair</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div style="margin-top:14px;">
+                            <label class="cc-label">Dossier de sauvegarde par défaut</label>
+                            <div class="input-row">
+                                <input type="text" id="settingsDefaultSavePath" class="cc-input" placeholder="Chemin par défaut pour les exports…">
+                                <button class="cc-btn cc-btn-outline" onclick="browseDefaultSavePath()">
+                                    <i class="fas fa-folder-open"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- CapCut Paths -->
+                    <div class="panel-section fade-in">
+                        <div class="panel-section-title"><i class="fas fa-map-marker-alt"></i> Chemins CapCut</div>
+                        
+                        <div style="margin-bottom:14px;">
+                            <label class="cc-label">Chemin des drafts CapCut</label>
+                            <div class="input-row">
+                                <input type="text" id="settingsCapcutDraftPath" class="cc-input" placeholder="Chemin vers les drafts CapCut…">
+                                <button class="cc-btn cc-btn-outline" onclick="browseCapcutDraftPath()">
+                                    <i class="fas fa-folder-open"></i>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <label class="cc-label">Chemin d'installation CapCut</label>
+                            <div class="input-row">
+                                <input type="text" id="settingsCapcutExePath" class="cc-input" placeholder="Chemin vers l'exécutable CapCut…">
+                                <button class="cc-btn cc-btn-outline" onclick="browseCapcutExePath()">
+                                    <i class="fas fa-search"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Export Settings -->
+                    <div class="panel-section fade-in">
+                        <div class="panel-section-title"><i class="fas fa-file-export"></i> Paramètres d'export</div>
+                        
+                        <div class="form-grid">
+                            <div>
+                                <label class="cc-label">Format de compression</label>
+                                <select id="settingsCompressionFormat" class="cc-select">
+                                    <option value="zip">ZIP</option>
+                                    <option value="7z">7Z</option>
+                                    <option value="tar">TAR</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="cc-label">Niveau de compression</label>
+                                <select id="settingsCompressionLevel" class="cc-select">
+                                    <option value="fast">Rapide</option>
+                                    <option value="normal">Normal</option>
+                                    <option value="max">Maximum</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div style="margin-top:14px;">
+                            <label class="cc-label">
+                                <input type="checkbox" id="settingsAutoCleanup" style="margin-right:8px;">
+                                Nettoyer automatiquement les fichiers temporaires
+                            </label>
+                        </div>
+                        
+                        <div style="margin-top:12px;">
+                            <label class="cc-label">
+                                <input type="checkbox" id="settingsIncludeTemplates" style="margin-right:8px;">
+                                Inclure les templates dans l'export
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Advanced Settings -->
+                    <div class="panel-section fade-in">
+                        <div class="panel-section-title"><i class="fas fa-tools"></i> Paramètres avancés</div>
+                        
+                        <div class="form-grid">
+                            <div>
+                                <label class="cc-label">Timeout de traitement (secondes)</label>
+                                <input type="number" id="settingsProcessTimeout" class="cc-input" value="300" min="30" max="3600">
+                            </div>
+                            <div>
+                                <label class="cc-label">Taille max des fichiers (MB)</label>
+                                <input type="number" id="settingsMaxFileSize" class="cc-input" value="1024" min="1" max="10240">
+                            </div>
+                        </div>
+                        
+                        <div style="margin-top:14px;">
+                            <label class="cc-label">
+                                <input type="checkbox" id="settingsDebugMode" style="margin-right:8px;">
+                                Mode debug (logs détaillés)
+                            </label>
+                        </div>
+                        
+                        <div style="margin-top:12px;">
+                            <label class="cc-label">
+                                <input type="checkbox" id="settingsAutoDetect" style="margin-right:8px;">
+                                Détection automatique des projets au démarrage
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Actions -->
+                    <div class="panel-section fade-in">
+                        <div class="panel-section-title"><i class="fas fa-play-circle"></i> Actions</div>
+                        
+                        <div style="display:flex;gap:10px;flex-wrap:wrap;">
+                            <button class="cc-btn cc-btn-blue" onclick="testPaths()">
+                                <i class="fas fa-vial"></i> Tester les chemins
+                            </button>
+                            <button class="cc-btn cc-btn-outline" onclick="resetSettings()">
+                                <i class="fas fa-undo"></i> Réinitialiser
+                            </button>
+                            <button class="cc-btn cc-btn-outline" onclick="exportSettings()">
+                                <i class="fas fa-download"></i> Exporter config
+                            </button>
+                            <button class="cc-btn cc-btn-outline" onclick="importSettings()">
+                                <i class="fas fa-upload"></i> Importer config
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+    </div><!-- /main-content -->
+</div><!-- /app-body -->
+
+<!-- ════ EXPORT MODAL ════════════════════════════════════════════════ -->
+<div id="exportModal" class="modal-overlay hidden">
+    <div class="modal-box">
+        <div class="modal-header">
+            <div class="modal-header-left">
+                <div class="modal-header-title"><i class="fas fa-file-export" style="color:var(--accent);margin-right:8px;"></i>Export du projet</div>
+                <div class="modal-header-sub" id="projectNameDisplay">—</div>
+            </div>
+            <button class="modal-close" onclick="closeExportModal()"><i class="fas fa-times"></i></button>
+        </div>
+
+        <div class="modal-body">
+
+            <!-- Save Location -->
+            <div>
+                <div class="panel-section-title" style="margin-bottom:10px;"><i class="fas fa-folder"></i> Emplacement de sauvegarde</div>
+                <div class="toggle-group" style="margin-bottom:12px;">
+                    <div class="toggle-opt active" id="useTempBtn">
+                        <i class="fas fa-clock"></i> Temporaire
+                    </div>
+                    <div class="toggle-opt" id="useCustomBtn">
+                        <i class="fas fa-folder-open"></i> Personnalisé
+                    </div>
+                </div>
+                <div id="customLocationSection" class="hidden">
+                    <div class="input-row" style="margin-bottom:8px;">
+                        <select id="locationSelect" class="cc-select" style="flex:1;">
+                            <option value="">Choisir un emplacement…</option>
+                        </select>
+                        <button id="browseBtn" class="cc-btn cc-btn-outline"><i class="fas fa-ellipsis-h"></i></button>
+                    </div>
+                    <input type="text" id="customPathInput" class="cc-input" placeholder="Chemin personnalisé…">
+                </div>
+            </div>
+
+            <!-- Actions -->
+            <div style="display:flex;gap:10px;">
+                <button id="prepareBtn" class="cc-btn cc-btn-blue" style="flex:1;" onclick="prepareExport()">
+                    <i class="fas fa-clipboard-check"></i> Préparer l'export
+                </button>
+                <button id="startExportBtn" class="cc-btn cc-btn-green" style="flex:1;" disabled>
+                    <i class="fas fa-play"></i> Démarrer
+                </button>
+            </div>
+
+            <!-- Diagnostic Section -->
+            <div id="diagnosticSection" class="hidden fade-in">
+                <div class="panel-section-title" style="margin-bottom:10px;"><i class="fas fa-stethoscope"></i> Diagnostic du projet</div>
+                <div id="diagnosticResults"></div>
+            </div>
+
+            <!-- Progress Section -->
+            <div id="progressSection" class="hidden fade-in">
+                <div class="panel-section-title" style="margin-bottom:10px;"><i class="fas fa-tasks"></i> Progression de l'export</div>
+                <div class="progress-header">
+                    <span class="progress-label" id="progressText">Préparation…</span>
+                    <span class="progress-pct" id="progressPercent">0%</span>
+                </div>
+                <div class="progress-track">
+                    <div class="progress-fill" id="progressBar" style="width:0%;"></div>
+                </div>
+                <div class="progress-details-grid">
+                    <div class="detail-item">
+                        <div class="detail-key">Étape</div>
+                        <div class="detail-val" id="currentStage">Initialisation</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-key">Fichiers</div>
+                        <div class="detail-val" id="filesProcessed">0 / 0</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-key">Fichier actuel</div>
+                        <div class="detail-val" id="currentFile" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">—</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-key">Données</div>
+                        <div class="detail-val" id="dataProgress">0 / 0</div>
+                    </div>
+                </div>
+                <div style="text-align:right;margin-top:6px;">
+                    <span id="timeRemaining" style="font-size:11px;color:var(--accent);font-weight:700;"></span>
+                </div>
+            </div>
+
+            <!-- Export Result -->
+            <div id="exportResult" class="hidden fade-in">
+                <div class="info-box green">
+                    <div class="info-box-title"><i class="fas fa-check-circle"></i> Export réussi !</div>
+                    <div class="info-box-content" id="exportDetails"></div>
+                </div>
+                <div style="display:flex;gap:10px;margin-top:12px;">
+                    <button id="downloadBtn" class="cc-btn cc-btn-accent" style="flex:1;">
+                        <i class="fas fa-download"></i> Télécharger le ZIP
+                    </button>
+                    <button id="openFolderBtn" class="cc-btn cc-btn-ghost" style="flex:1;">
+                        <i class="fas fa-folder-open"></i> Ouvrir le dossier
+                    </button>
+                </div>
+            </div>
+
+        </div><!-- /modal-body -->
+
+        <div class="modal-footer">
+            <button id="newExportBtn" class="cc-btn cc-btn-ghost" style="font-size:12px;">
+                <i class="fas fa-plus"></i> Nouvel export
+            </button>
+            <button id="cancelExportBtn" class="cc-btn cc-btn-outline">
+                <i class="fas fa-times"></i> Annuler
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- ════ TOAST ═══════════════════════════════════════════════════════ -->
+<div class="toast-container">
+    <div id="toast" class="hidden">
+        <i id="toastIcon" class="fas fa-check-circle toast-icon" style="color:var(--success);"></i>
+        <div>
+            <div id="toastTitle" class="toast-title"></div>
+            <div id="toastMessage" class="toast-msg"></div>
+        </div>
+    </div>
+</div>
+
+<!-- Context Menu -->
+<div id="contextMenu" class="context-menu">
+    <div class="context-menu-item" onclick="duplicateProject()">
+        <i class="fas fa-copy"></i>
+        <span>Dupliquer</span>
+    </div>
+    <div class="context-menu-item" onclick="openProjectFolder()">
+        <i class="fas fa-folder-open"></i>
+        <span>Ouvrir le dossier</span>
+    </div>
+    <div class="context-menu-item" onclick="showProjectProperties()">
+        <i class="fas fa-info-circle"></i>
+        <span>Propriétés</span>
+    </div>
+    <div class="context-menu-separator"></div>
+    <div class="context-menu-item danger" onclick="deleteProject()">
+        <i class="fas fa-trash"></i>
+        <span>Supprimer</span>
+    </div>
+</div>
+
+<!-- ════ SCRIPT ══════════════════════════════════════════════════════ -->
+<script>
+    let currentExportData   = null;
+    let currentProjectPath  = null;
+    let currentProjectName  = null;
+    let currentExportId     = null;
+    let currentMode         = 'export';
+    let settingsLoaded      = false;
+    let contextMenuProject  = null; // Project for context menu
+
+    const I18N_JSONL_URL = './translations.jsonl';
+const I18N_JSONL_EMBEDDED = `{"source": "CapCut Project Manager", "en": "CapCut Project Manager", "fr": "Gestionnaire de projets CapCut", "es": "Administrador de proyectos CapCut", "ja": "CapCutプロジェクトマネージャー", "zh_CN": "CapCut 项目管理器"}
+{"source": "CapCut Manager", "en": "CapCut Manager", "fr": "Gestionnaire CapCut", "es": "Administrador CapCut", "ja": "CapCutマネージャー", "zh_CN": "CapCut 管理器"}
+{"source": "Gestionnaire de projets", "en": "Project manager", "fr": "Gestionnaire de projets", "es": "Administrador de proyectos", "ja": "プロジェクトマネージャー", "zh_CN": "项目管理器"}
+{"source": "Projets", "en": "Projects", "fr": "Projets", "es": "Proyectos", "ja": "プロジェクト", "zh_CN": "项目"}
+{"source": "Import", "en": "Import", "fr": "Import", "es": "Importar", "ja": "インポート", "zh_CN": "导入"}
+{"source": "Params", "en": "Settings", "fr": "Paramètres", "es": "Configuración", "ja": "設定", "zh_CN": "设置"}
+{"source": "Diag", "en": "Diagnostics", "fr": "Diagnostic", "es": "Diagnóstico", "ja": "診断", "zh_CN": "诊断"}
+{"source": "Sync", "en": "Sync", "fr": "Synchronisation", "es": "Sincronización", "ja": "同期", "zh_CN": "同步"}
+{"source": "Recherche des projets…", "en": "Search projects…", "fr": "Recherche des projets…", "es": "Buscar proyectos…", "ja": "プロジェクトを検索…", "zh_CN": "搜索项目…"}
+{"source": "Détection automatique des projets CapCut installés sur votre machine.", "en": "Automatic detection of CapCut projects installed on your machine.", "fr": "Détection automatique des projets CapCut installés sur votre machine.", "es": "Detección automática de proyectos CapCut instalados en su equipo.", "ja": "インストール済みのCapCutプロジェクトを自動検出します。", "zh_CN": "自动检测您电脑上安装的 CapCut 项目。"}
+{"source": "Projets détectés", "en": "Detected projects", "fr": "Projets détectés", "es": "Proyectos detectados", "ja": "検出されたプロジェクト", "zh_CN": "检测到的项目"}
+{"source": "— projets trouvés", "en": "— projects found", "fr": "— projets trouvés", "es": "— proyectos encontrados", "ja": "— 件のプロジェクトが見つかりました", "zh_CN": "— 个项目已找到"}
+{"source": "Synchronisé", "en": "Synced", "fr": "Synchronisé", "es": "Sincronizado", "ja": "同期済み", "zh_CN": "已同步"}
+{"source": "Aucun projet trouvé", "en": "No project found", "fr": "Aucun projet trouvé", "es": "No se encontró ningún proyecto", "ja": "プロジェクトが見つかりません", "zh_CN": "未找到项目"}
+{"source": "Assurez-vous que CapCut est installé et que vous avez créé des projets.", "en": "Make sure CapCut is installed and you created projects.", "fr": "Assurez-vous que CapCut est installé et que vous avez créé des projets.", "es": "Asegúrese de que CapCut esté instalado y de haber creado proyectos.", "ja": "CapCut がインストールされ、プロジェクトが作成されていることを確認してください。", "zh_CN": "请确保已安装 CapCut 并创建了项目。"}
+{"source": "Réessayer", "en": "Retry", "fr": "Réessayer", "es": "Reintentar", "ja": "再試行", "zh_CN": "重试"}
+{"source": "Diagnostic système", "en": "System diagnostics", "fr": "Diagnostic système", "es": "Diagnóstico del sistema", "ja": "システム診断", "zh_CN": "系统诊断"}
+{"source": "Informations système", "en": "System information", "fr": "Informations système", "es": "Información del sistema", "ja": "システム情報", "zh_CN": "系统信息"}
+{"source": "Problèmes détectés", "en": "Detected issues", "fr": "Problèmes détectés", "es": "Problemas detectados", "ja": "検出された問題", "zh_CN": "检测到的问题"}
+{"source": "Notes", "en": "Notes", "fr": "Notes", "es": "Notas", "ja": "メモ", "zh_CN": "备注"}
+{"source": "Recommandations", "en": "Recommendations", "fr": "Recommandations", "es": "Recomendaciones", "ja": "推奨事項", "zh_CN": "建议"}
+{"source": "Importer un projet", "en": "Import a project", "fr": "Importer un projet", "es": "Importar un proyecto", "ja": "プロジェクトをインポート", "zh_CN": "导入项目"}
+{"source": "Réinitialiser", "en": "Reset", "fr": "Réinitialiser", "es": "Restablecer", "ja": "リセット", "zh_CN": "重置"}
+{"source": "Source du projet", "en": "Project source", "fr": "Source du projet", "es": "Fuente del proyecto", "ja": "プロジェクトソース", "zh_CN": "项目来源"}
+{"source": "Fichier ZIP ou dossier", "en": "ZIP file or folder", "fr": "Fichier ZIP ou dossier", "es": "Archivo ZIP o carpeta", "ja": "ZIPファイルまたはフォルダー", "zh_CN": "ZIP 文件或文件夹"}
+{"source": "Analyser la source", "en": "Analyze source", "fr": "Analyser la source", "es": "Analizar fuente", "ja": "ソースを解析", "zh_CN": "分析来源"}
+{"source": "Informations du projet", "en": "Project information", "fr": "Informations du projet", "es": "Información del proyecto", "ja": "プロジェクト情報", "zh_CN": "项目信息"}
+{"source": "Détails détectés", "en": "Detected details", "fr": "Détails détectés", "es": "Detalles detectados", "ja": "検出された詳細", "zh_CN": "检测到的详细信息"}
+{"source": "Configuration", "en": "Configuration", "fr": "Configuration", "es": "Configuración", "ja": "設定", "zh_CN": "配置"}
+{"source": "Nom du projet", "en": "Project name", "fr": "Nom du projet", "es": "Nombre del proyecto", "ja": "プロジェクト名", "zh_CN": "项目名称"}
+{"source": "Emplacement des médias", "en": "Media location", "fr": "Emplacement des médias", "es": "Ubicación de medios", "ja": "メディアの場所", "zh_CN": "媒体位置"}
+{"source": "Choisir un emplacement…", "en": "Choose a location…", "fr": "Choisir un emplacement…", "es": "Elegir una ubicación…", "ja": "場所を選択…", "zh_CN": "选择位置…"}
+{"source": "Chemin personnalisé", "en": "Custom path", "fr": "Chemin personnalisé", "es": "Ruta personalizada", "ja": "カスタムパス", "zh_CN": "自定义路径"}
+{"source": "Démarrer l'import", "en": "Start import", "fr": "Démarrer l'import", "es": "Iniciar importación", "ja": "インポート開始", "zh_CN": "开始导入"}
+{"source": "Import en cours…", "en": "Importing…", "fr": "Import en cours…", "es": "Importando…", "ja": "インポート中…", "zh_CN": "正在导入…"}
+{"source": "Préparation…", "en": "Preparing…", "fr": "Préparation…", "es": "Preparando…", "ja": "準備中…", "zh_CN": "准备中…"}
+{"source": "Initialisation", "en": "Initialization", "fr": "Initialisation", "es": "Inicialización", "ja": "初期化", "zh_CN": "初始化"}
+{"source": "Import réussi !", "en": "Import successful!", "fr": "Import réussi !", "es": "¡Importación correcta!", "ja": "インポート成功！", "zh_CN": "导入成功！"}
+{"source": "Ouvrir le projet", "en": "Open project", "fr": "Ouvrir le projet", "es": "Abrir proyecto", "ja": "プロジェクトを開く", "zh_CN": "打开项目"}
+{"source": "Nouvel import", "en": "New import", "fr": "Nouvel import", "es": "Nueva importación", "ja": "新しいインポート", "zh_CN": "新的导入"}
+{"source": "Paramètres", "en": "Settings", "fr": "Paramètres", "es": "Configuración", "ja": "設定", "zh_CN": "设置"}
+{"source": "Sauvegarder", "en": "Save", "fr": "Sauvegarder", "es": "Guardar", "ja": "保存", "zh_CN": "保存"}
+{"source": "Paramètres généraux", "en": "General settings", "fr": "Paramètres généraux", "es": "Configuración general", "ja": "一般設定", "zh_CN": "常规设置"}
+{"source": "Langue", "en": "Language", "fr": "Langue", "es": "Idioma", "ja": "言語", "zh_CN": "语言"}
+{"source": "Français", "en": "French", "fr": "Français", "es": "Francés", "ja": "フランス語", "zh_CN": "法语"}
+{"source": "English", "en": "English", "fr": "Anglais", "es": "Inglés", "ja": "英語", "zh_CN": "英语"}
+{"source": "Español", "en": "Spanish", "fr": "Español", "es": "Español", "ja": "スペイン語", "zh_CN": "西班牙语"}
+{"source": "日本語", "en": "Japanese", "fr": "Japonais", "es": "Japonés", "ja": "日本語", "zh_CN": "日语"}
+{"source": "简体中文", "en": "Simplified Chinese", "fr": "Chinois simplifié", "es": "Chino simplificado", "ja": "簡体字中国語", "zh_CN": "简体中文"}
+{"source": "Thème", "en": "Theme", "fr": "Thème", "es": "Tema", "ja": "テーマ", "zh_CN": "主题"}
+{"source": "Sombre", "en": "Dark", "fr": "Sombre", "es": "Oscuro", "ja": "ダーク", "zh_CN": "深色"}
+{"source": "Clair", "en": "Light", "fr": "Clair", "es": "Claro", "ja": "ライト", "zh_CN": "浅色"}
+{"source": "Dossier de sauvegarde par défaut", "en": "Default backup folder", "fr": "Dossier de sauvegarde par défaut", "es": "Carpeta de copia predeterminada", "ja": "デフォルト保存フォルダー", "zh_CN": "默认备份文件夹"}
+{"source": "Chemins CapCut", "en": "CapCut paths", "fr": "Chemins CapCut", "es": "Rutas de CapCut", "ja": "CapCutのパス", "zh_CN": "CapCut 路径"}
+{"source": "Chemin des drafts CapCut", "en": "CapCut drafts path", "fr": "Chemin des drafts CapCut", "es": "Ruta de borradores de CapCut", "ja": "CapCutドラフトパス", "zh_CN": "CapCut 草稿路径"}
+{"source": "Chemin d'installation CapCut", "en": "CapCut installation path", "fr": "Chemin d'installation CapCut", "es": "Ruta de instalación de CapCut", "ja": "CapCutインストールパス", "zh_CN": "CapCut 安装路径"}
+{"source": "Paramètres d'export", "en": "Export settings", "fr": "Paramètres d'export", "es": "Configuración de exportación", "ja": "エクスポート設定", "zh_CN": "导出设置"}
+{"source": "Format de compression", "en": "Compression format", "fr": "Format de compression", "es": "Formato de compresión", "ja": "圧縮形式", "zh_CN": "压缩格式"}
+{"source": "Niveau de compression", "en": "Compression level", "fr": "Niveau de compression", "es": "Nivel de compresión", "ja": "圧縮レベル", "zh_CN": "压缩级别"}
+{"source": "Rapide", "en": "Fast", "fr": "Rapide", "es": "Rápido", "ja": "高速", "zh_CN": "快速"}
+{"source": "Normal", "en": "Normal", "fr": "Normal", "es": "Normal", "ja": "標準", "zh_CN": "标准"}
+{"source": "Maximum", "en": "Maximum", "fr": "Maximum", "es": "Máximo", "ja": "最大", "zh_CN": "最大"}
+{"source": "Nettoyer automatiquement les fichiers temporaires", "en": "Automatically clean temporary files", "fr": "Nettoyer automatiquement les fichiers temporaires", "es": "Limpiar automáticamente los archivos temporales", "ja": "一時ファイルを自動的に削除", "zh_CN": "自动清理临时文件"}
+{"source": "Inclure les templates dans l'export", "en": "Include templates in export", "fr": "Inclure les templates dans l'export", "es": "Incluir plantillas en la exportación", "ja": "テンプレートをエクスポートに含める", "zh_CN": "在导出中包含模板"}
+{"source": "Paramètres avancés", "en": "Advanced settings", "fr": "Paramètres avancés", "es": "Configuración avanzada", "ja": "詳細設定", "zh_CN": "高级设置"}
+{"source": "Timeout de traitement (secondes)", "en": "Processing timeout (seconds)", "fr": "Timeout de traitement (secondes)", "es": "Tiempo de espera de procesamiento (segundos)", "ja": "処理タイムアウト（秒）", "zh_CN": "处理超时（秒）"}
+{"source": "Taille max des fichiers (MB)", "en": "Max file size (MB)", "fr": "Taille max des fichiers (MB)", "es": "Tamaño máximo de archivo (MB)", "ja": "最大ファイルサイズ（MB）", "zh_CN": "最大文件大小（MB）"}
+{"source": "Mode debug (logs détaillés)", "en": "Debug mode (detailed logs)", "fr": "Mode debug (logs détaillés)", "es": "Modo depuración (registros detallados)", "ja": "デバッグモード（詳細ログ）", "zh_CN": "调试模式（详细日志）"}
+{"source": "Détection automatique des projets au démarrage", "en": "Automatic project detection on startup", "fr": "Détection automatique des projets au démarrage", "es": "Detección automática de proyectos al iniciar", "ja": "起動時にプロジェクトを自動検出", "zh_CN": "启动时自动检测项目"}
+{"source": "Actions", "en": "Actions", "fr": "Actions", "es": "Acciones", "ja": "アクション", "zh_CN": "操作"}
+{"source": "Tester les chemins", "en": "Test paths", "fr": "Tester les chemins", "es": "Probar rutas", "ja": "パスをテスト", "zh_CN": "测试路径"}
+{"source": "Exporter config", "en": "Export config", "fr": "Exporter config", "es": "Exportar configuración", "ja": "設定をエクスポート", "zh_CN": "导出配置"}
+{"source": "Importer config", "en": "Import config", "fr": "Importer config", "es": "Importar configuración", "ja": "設定をインポート", "zh_CN": "导入配置"}
+{"source": "Export du projet", "en": "Project export", "fr": "Export du projet", "es": "Exportación del proyecto", "ja": "プロジェクトのエクスポート", "zh_CN": "项目导出"}
+{"source": "Emplacement de sauvegarde", "en": "Save location", "fr": "Emplacement de sauvegarde", "es": "Ubicación de guardado", "ja": "保存場所", "zh_CN": "保存位置"}
+{"source": "Temporaire", "en": "Temporary", "fr": "Temporaire", "es": "Temporal", "ja": "一時", "zh_CN": "临时"}
+{"source": "Personnalisé", "en": "Custom", "fr": "Personnalisé", "es": "Personalizado", "ja": "カスタム", "zh_CN": "自定义"}
+{"source": "Préparer l'export", "en": "Prepare export", "fr": "Préparer l'export", "es": "Preparar exportación", "ja": "エクスポートを準備", "zh_CN": "准备导出"}
+{"source": "Démarrer", "en": "Start", "fr": "Démarrer", "es": "Iniciar", "ja": "開始", "zh_CN": "开始"}
+{"source": "Diagnostic du projet", "en": "Project diagnostics", "fr": "Diagnostic du projet", "es": "Diagnóstico del proyecto", "ja": "プロジェクト診断", "zh_CN": "项目诊断"}
+{"source": "Progression de l'export", "en": "Export progress", "fr": "Progression de l'export", "es": "Progreso de exportación", "ja": "エクスポート進行状況", "zh_CN": "导出进度"}
+{"source": "Étape", "en": "Step", "fr": "Étape", "es": "Paso", "ja": "ステップ", "zh_CN": "步骤"}
+{"source": "Fichiers", "en": "Files", "fr": "Fichiers", "es": "Archivos", "ja": "ファイル", "zh_CN": "文件"}
+{"source": "Fichier actuel", "en": "Current file", "fr": "Fichier actuel", "es": "Archivo actual", "ja": "現在のファイル", "zh_CN": "当前文件"}
+{"source": "Données", "en": "Data", "fr": "Données", "es": "Datos", "ja": "データ", "zh_CN": "数据"}
+{"source": "Export réussi !", "en": "Export successful!", "fr": "Export réussi !", "es": "¡Exportación exitosa!", "ja": "エクスポート成功！", "zh_CN": "导出成功！"}
+{"source": "Télécharger le ZIP", "en": "Download ZIP", "fr": "Télécharger le ZIP", "es": "Descargar ZIP", "ja": "ZIPをダウンロード", "zh_CN": "下载 ZIP"}
+{"source": "Ouvrir le dossier", "en": "Open folder", "fr": "Ouvrir le dossier", "es": "Abrir carpeta", "ja": "フォルダーを開く", "zh_CN": "打开文件夹"}
+{"source": "Nouvel export", "en": "New export", "fr": "Nouvel export", "es": "Nueva exportación", "ja": "新しいエクスポート", "zh_CN": "新的导出"}
+{"source": "Annuler", "en": "Cancel", "fr": "Annuler", "es": "Cancelar", "ja": "キャンセル", "zh_CN": "取消"}
+{"source": "Dupliquer", "en": "Duplicate", "fr": "Dupliquer", "es": "Duplicar", "ja": "複製", "zh_CN": "复制"}
+{"source": "Propriétés", "en": "Properties", "fr": "Propriétés", "es": "Propiedades", "ja": "プロパティ", "zh_CN": "属性"}
+{"source": "Supprimer", "en": "Delete", "fr": "Supprimer", "es": "Eliminar", "ja": "削除", "zh_CN": "删除"}
+`;
+    const I18N_STORAGE_KEY = 'capcut-ui-language';
+    const SUPPORTED_LANGUAGE_LABELS = {
+        fr: 'Français',
+        en: 'English',
+        es: 'Español',
+        ja: '日本語',
+        zh_CN: '简体中文'
+    };
+    let i18nReady = false;
+    let i18nEntries = [];
+    let i18nMap = new Map();
+    let currentUILanguage = localStorage.getItem(I18N_STORAGE_KEY) || 'en';
+    let i18nObserver = null;
+    let isApplyingI18n = false;
+    const ORIGINAL_TEXT_CACHE = new WeakMap();
+    const ORIGINAL_ATTR_CACHE = new WeakMap();
+
+    function parseI18nJsonl(raw) {
+        const rows = [];
+        raw.split(/\r?\n/).forEach(line => {
+            const trimmed = line.trim();
+            if (!trimmed || trimmed.startsWith('#')) return;
+            try {
+                const obj = JSON.parse(trimmed);
+                if (obj && typeof obj === 'object') rows.push(obj);
+            } catch (e) {
+                console.warn('Invalid i18n JSONL line skipped:', trimmed, e);
+            }
+        });
+        return rows;
+    }
+
+    function pickSourceText(entry) {
+        if (!entry || typeof entry !== 'object') return '';
+        return (
+            entry.source ??
+            entry.src ??
+            entry.original ??
+            entry.fr ??
+            entry.key ??
+            ''
+        );
+    }
+
+    function normalizeLangValue(value) {
+        if (value == null) return '';
+        return String(value);
+    }
+
+    function getTranslationValue(entry, lang) {
+        if (!entry || !lang) return '';
+        const candidates = [
+            entry[lang],
+            entry.translation && entry.translation[lang],
+            entry.text && entry.text[lang]
+        ];
+        for (const candidate of candidates) {
+            const value = normalizeLangValue(candidate);
+            if (value) return value;
+        }
+        return '';
+    }
+
+    function detectAvailableLanguages(entries = i18nEntries) {
+        const langs = new Set();
+        entries.forEach(entry => {
+            if (!entry || typeof entry !== 'object') return;
+            Object.keys(entry).forEach(key => {
+                if (['source', 'src', 'original', 'key', 'translation', 'text'].includes(key)) return;
+                if (normalizeLangValue(entry[key])) langs.add(key);
+            });
+            if (entry.translation && typeof entry.translation === 'object') {
+                Object.keys(entry.translation).forEach(key => {
+                    if (normalizeLangValue(entry.translation[key])) langs.add(key);
+                });
+            }
+            if (entry.text && typeof entry.text === 'object') {
+                Object.keys(entry.text).forEach(key => {
+                    if (normalizeLangValue(entry.text[key])) langs.add(key);
+                });
+            }
+        });
+
+        if (!langs.size) {
+            ['fr', 'en', 'es', 'ja', 'zh_CN'].forEach(code => langs.add(code));
+        }
+
+        const preferredOrder = ['fr', 'en', 'es', 'ja', 'zh_CN'];
+        return preferredOrder.filter(code => langs.has(code));
+    }
+
+    function getLanguageLabel(code) {
+        return SUPPORTED_LANGUAGE_LABELS[code] || code;
+    }
+
+    function buildLanguageSelectorOptions() {
+        const selector = document.getElementById('settingsLanguage');
+        if (!selector) return;
+
+        const previousValue = selector.value || currentUILanguage || 'en';
+        const availableLanguages = detectAvailableLanguages();
+
+        selector.innerHTML = '';
+        availableLanguages.forEach(code => {
+            const option = document.createElement('option');
+            option.value = code;
+            option.textContent = getLanguageLabel(code);
+            selector.appendChild(option);
+        });
+
+        if (availableLanguages.includes(previousValue)) {
+            selector.value = previousValue;
+        } else if (availableLanguages.includes(currentUILanguage)) {
+            selector.value = currentUILanguage;
+        } else {
+            selector.value = availableLanguages[0] || 'en';
+        }
+    }
+
+    function updateLanguageSelectorLabels() {
+        const selector = document.getElementById('settingsLanguage');
+        if (!selector) return;
+        Array.from(selector.options).forEach(option => {
+            option.textContent = getLanguageLabel(option.value);
+        });
+    }
+
+    function buildI18nMap(entries) {
+        i18nMap = new Map();
+        entries.forEach(entry => {
+            const source = pickSourceText(entry);
+            if (!source) return;
+            i18nMap.set(source, entry);
+        });
+    }
+
+    function translateFromEntry(entry, lang) {
+        return getTranslationValue(entry, lang) || null;
+    }
+
+    function translateString(sourceText, lang = currentUILanguage) {
+        const original = normalizeLangValue(sourceText);
+        if (!original) return original;
+        if (lang === 'fr') return original;
+
+        const entry = i18nMap.get(original);
+        if (entry) {
+            const translated = translateFromEntry(entry, lang);
+            if (translated) return translated;
+        }
+
+        let translated = original;
+        const replacements = Array.from(i18nMap.entries())
+            .map(([source, entry]) => ({ source, target: translateFromEntry(entry, lang) }))
+            .filter(item => item.target)
+            .sort((a, b) => b.source.length - a.source.length);
+
+        for (const { source, target } of replacements) {
+            if (translated.includes(source)) {
+                translated = translated.split(source).join(target);
+            }
+        }
+        return translated;
+    }
+
+    function translateAttributeValue(value, lang = currentUILanguage) {
+        return translateString(value, lang);
+    }
+
+    function translateProjectCount(count, lang = currentUILanguage) {
+        if (lang === 'fr') {
+            return `${count} projet${count > 1 ? 's' : ''} trouvé${count > 1 ? 's' : ''}`;
+        }
+        const singular = translateString('projet', lang);
+        const plural = translateString('projets', lang);
+        const found = translateString('trouvé', lang);
+        const foundPlural = translateString('trouvés', lang);
+        return `${count} ${count > 1 ? plural : singular} ${count > 1 ? foundPlural : found}`.replace(/\s+/g, ' ').trim();
+    }
+
+    function translateDynamicText(text, lang = currentUILanguage) {
+        let output = normalizeLangValue(text);
+        if (!output || lang === 'fr') return output;
+
+        output = translateString(output, lang);
+
+        const timeMatch = output.match(/^Temps restant\s*:\s*(\d+):(\d{2})$/);
+        if (timeMatch) {
+            return `${translateString('Temps restant', lang)}: ${timeMatch[1]}:${timeMatch[2]}`;
+        }
+
+        const projectCountMatch = output.match(/^(\d+)\s+projet(?:s)?\s+trouvé(?:s)?$/i);
+        if (projectCountMatch) {
+            return translateProjectCount(Number(projectCountMatch[1]), lang);
+        }
+
+        const fileCountMatch = output.match(/^(\d+)\s+fichiers?\s+manquants?$/i);
+        if (fileCountMatch) {
+            const missing = translateString('fichiers manquants', lang);
+            return `${fileCountMatch[1]} ${missing}`;
+        }
+
+        const templatesMatch = output.match(/^(\d+)\s+templates\s+créés$/i);
+        if (templatesMatch) {
+            return `${templatesMatch[1]} ${translateString('templates créés', lang)}`;
+        }
+
+        const processedMatch = output.match(/^(\d+)\s+fichiers\s+traités$/i);
+        if (processedMatch) {
+            return `${processedMatch[1]} ${translateString('fichiers traités', lang)}`;
+        }
+
+        const errorCountMatch = output.match(/^\((\d+)\s+erreurs\)$/i);
+        if (errorCountMatch) {
+            return `(${errorCountMatch[1]} ${translateString('erreurs', lang)})`;
+        }
+
+        return output;
+    }
+
+    function cacheOriginalTextNode(node) {
+        if (!node) return;
+        if (!ORIGINAL_TEXT_CACHE.has(node)) {
+            ORIGINAL_TEXT_CACHE.set(node, node.nodeValue || '');
+        }
+    }
+
+    function cacheOriginalAttribute(el, attr) {
+        if (!el) return;
+        let attrMap = ORIGINAL_ATTR_CACHE.get(el);
+        if (!attrMap) {
+            attrMap = new Map();
+            ORIGINAL_ATTR_CACHE.set(el, attrMap);
+        }
+        if (!attrMap.has(attr)) {
+            attrMap.set(attr, el.getAttribute(attr));
+        }
+    }
+
+    function getOriginalTextNodeValue(node) {
+        if (!node) return '';
+        return ORIGINAL_TEXT_CACHE.has(node) ? ORIGINAL_TEXT_CACHE.get(node) : (node.nodeValue || '');
+    }
+
+    function getOriginalAttributeValue(el, attr) {
+        const attrMap = ORIGINAL_ATTR_CACHE.get(el);
+        if (attrMap && attrMap.has(attr)) {
+            return attrMap.get(attr);
+        }
+        return el.getAttribute(attr);
+    }
+
+    function snapshotI18nOriginals(root = document) {
+        const scope = root === document ? document.body : root;
+        if (!scope || !scope.querySelectorAll) return;
+
+        const walker = document.createTreeWalker(scope, NodeFilter.SHOW_TEXT, {
+            acceptNode(node) {
+                if (!node || !node.parentElement) return NodeFilter.FILTER_REJECT;
+                const parentTag = node.parentElement.tagName;
+                if (['SCRIPT', 'STYLE', 'NOSCRIPT'].includes(parentTag)) return NodeFilter.FILTER_REJECT;
+                if (!node.nodeValue || !node.nodeValue.trim()) return NodeFilter.FILTER_REJECT;
+                return NodeFilter.FILTER_ACCEPT;
+            }
+        });
+
+        const textNodes = [];
+        while (walker.nextNode()) textNodes.push(walker.currentNode);
+        textNodes.forEach(cacheOriginalTextNode);
+
+        const attrNames = ['placeholder', 'title', 'aria-label'];
+        scope.querySelectorAll('*').forEach(el => {
+            attrNames.forEach(attr => {
+                if (el.hasAttribute && el.hasAttribute(attr)) {
+                    cacheOriginalAttribute(el, attr);
+                }
+            });
+        });
+    }
+
+    function translateNodeTree(root, lang = currentUILanguage) {
+        if (!root || !root.querySelectorAll) return;
+
+        snapshotI18nOriginals(root);
+
+        const scope = root === document ? document.body : root;
+        if (!scope || !scope.querySelectorAll) return;
+
+        const walker = document.createTreeWalker(scope, NodeFilter.SHOW_TEXT, {
+            acceptNode(node) {
+                if (!node || !node.parentElement) return NodeFilter.FILTER_REJECT;
+                const parentTag = node.parentElement.tagName;
+                if (['SCRIPT', 'STYLE', 'NOSCRIPT'].includes(parentTag)) return NodeFilter.FILTER_REJECT;
+                if (!node.nodeValue || !node.nodeValue.trim()) return NodeFilter.FILTER_REJECT;
+                return NodeFilter.FILTER_ACCEPT;
+            }
+        });
+
+        const textNodes = [];
+        while (walker.nextNode()) textNodes.push(walker.currentNode);
+
+        textNodes.forEach(node => {
+            const original = getOriginalTextNodeValue(node);
+            node.nodeValue = translateDynamicText(original, lang);
+        });
+
+        const attrNames = ['placeholder', 'title', 'aria-label'];
+        scope.querySelectorAll('*').forEach(el => {
+            attrNames.forEach(attr => {
+                if (el.hasAttribute && el.hasAttribute(attr)) {
+                    const originalValue = getOriginalAttributeValue(el, attr);
+                    if (typeof originalValue === 'string' && originalValue) {
+                        const translated = translateAttributeValue(originalValue, lang);
+                        if (translated && translated !== el.getAttribute(attr)) el.setAttribute(attr, translated);
+                    }
+                }
+            });
+        });
+    }
+
+    function applyI18n(root = document) {
+        if (isApplyingI18n) return;
+        isApplyingI18n = true;
+        try {
+            snapshotI18nOriginals(root);
+            translateNodeTree(root === document ? document.body : root, currentUILanguage);
+            document.documentElement.lang = currentUILanguage === 'zh_CN' ? 'zh-Hans' : currentUILanguage;
+        } finally {
+            isApplyingI18n = false;
+        }
+    }
+
+    async function loadI18nJsonl() {
+        const parseAndApply = (raw, sourceLabel = 'embedded') => {
+            const entries = parseI18nJsonl(raw || '');
+            if (entries.length) {
+                i18nEntries = entries;
+                buildI18nMap(i18nEntries);
+                buildLanguageSelectorOptions();
+                i18nReady = true;
+                snapshotI18nOriginals(document);
+                setUILanguage(currentUILanguage, false);
+                return true;
+            }
+            console.warn('No translations found from', sourceLabel);
+            return false;
+        };
+
+        // 1) Embedded fallback, so the UI still works when fetch() is blocked
+        //    (for example when the HTML is opened directly or the server does not
+        //    expose translations.jsonl as a static file).
+        parseAndApply(I18N_JSONL_EMBEDDED, 'embedded fallback');
+
+        // 2) External file, when available, overrides the fallback.
+        try {
+            const response = await fetch(I18N_JSONL_URL, { cache: 'no-store' });
+            if (!response.ok) {
+                console.warn('i18n file not found:', I18N_JSONL_URL);
+                return;
+            }
+            const raw = await response.text();
+            parseAndApply(raw, I18N_JSONL_URL);
+        } catch (error) {
+            console.warn('Unable to load translations from file, using embedded fallback:', error);
+        }
+    }
+
+    function setUILanguage(lang, persist = true) {
+        const available = detectAvailableLanguages();
+        currentUILanguage = available.includes(lang) ? lang : (available.includes('en') ? 'en' : (available[0] || 'en'));
+        if (persist) localStorage.setItem(I18N_STORAGE_KEY, currentUILanguage);
+        const selector = document.getElementById('settingsLanguage');
+        if (selector && selector.value !== currentUILanguage) selector.value = currentUILanguage;
+        updateLanguageSelectorLabels();
+        applyI18n();
+    }
+
+    function observeI18nChanges() {
+        // Disabled: DOM observation caused translation loops when returning from settings.
+        return;
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+
+        setMode('export');
+        setupExportModal();
+        
+        // Load settings on startup
+        loadSettings();
+        snapshotI18nOriginals(document);
+        loadI18nJsonl();
+        observeI18nChanges();
+        setUILanguage(currentUILanguage, false);
+        
+        // Add language and theme change listeners
+        const languageSelect = document.getElementById('settingsLanguage');
+        if (languageSelect) {
+            languageSelect.addEventListener('change', function() {
+                setUILanguage(this.value);
+            });
+        }
+
+        const themeSelect = document.getElementById('settingsTheme');
+        if (themeSelect) {
+            themeSelect.addEventListener('change', function() {
+                applyTheme(this.value);
+            });
+        }
+        
+        // Setup context menu
+        setupContextMenu();
+    });
+
+    function setupContextMenu() {
+        // Hide context menu when clicking elsewhere
+        document.addEventListener('click', function(e) {
+            const contextMenu = document.getElementById('contextMenu');
+            if (!contextMenu.contains(e.target)) {
+                contextMenu.style.display = 'none';
+            }
+        });
+        
+        // Hide context menu on right click elsewhere
+        document.addEventListener('contextmenu', function(e) {
+            if (!e.target.closest('.project-card')) {
+                e.preventDefault();
+                document.getElementById('contextMenu').style.display = 'none';
+            }
+        });
+    }
+
+    /* ── MODE ─────────────────────────────────────────────────────── */
+    function setMode(mode) {
+        currentMode = mode;
+        const exportSec  = document.getElementById('exportMode');
+        const importSec  = document.getElementById('importMode');
+        const settingsSec = document.getElementById('settingsMode');
+
+        // Reset all sidebar icons
+        document.querySelectorAll('.sidebar-icon').forEach(icon => icon.classList.remove('active'));
+
+        // Hide all sections
+        exportSec.classList.add('hidden');
+        importSec.classList.add('hidden');
+        settingsSec.classList.add('hidden');
+
+        if (mode === 'export') {
+            // Activate projects icon in sidebar
+            document.querySelectorAll('.sidebar-icon')[0].classList.add('active');
+            exportSec.classList.remove('hidden');
+            loadProjects();
+        } else if (mode === 'import') {
+            // Activate import icon in sidebar
+            document.querySelectorAll('.sidebar-icon')[1].classList.add('active');
+            importSec.classList.remove('hidden');
+        } else if (mode === 'settings') {
+            // Activate settings icon in sidebar
+            document.querySelectorAll('.sidebar-icon')[2].classList.add('active');
+            settingsSec.classList.remove('hidden');
+            loadSettings();
+        }
+
+        applyI18n();
+}
+
+    /* ── MODAL SETUP ──────────────────────────────────────────────── */
+    function setupExportModal() {
+        document.getElementById('useTempBtn').addEventListener('click', () => {
+            document.getElementById('customLocationSection').classList.add('hidden');
+            document.getElementById('useTempBtn').classList.add('active');
+            document.getElementById('useCustomBtn').classList.remove('active');
+        });
+        document.getElementById('useCustomBtn').addEventListener('click', () => {
+            document.getElementById('customLocationSection').classList.remove('hidden');
+            document.getElementById('useCustomBtn').classList.add('active');
+            document.getElementById('useTempBtn').classList.remove('active');
+            loadSaveLocations();
+        });
+        document.getElementById('browseBtn').addEventListener('click', browseFolder);
+        document.getElementById('prepareBtn').addEventListener('click', prepareExport);
+        document.getElementById('startExportBtn').addEventListener('click', startActualExport);
+        document.getElementById('cancelExportBtn').addEventListener('click', cancelCurrentExport);
+        document.getElementById('newExportBtn').addEventListener('click', resetExportModal);
+        document.getElementById('downloadBtn').addEventListener('click', downloadExport);
+        document.getElementById('openFolderBtn').addEventListener('click', openExportFolder);
+    }
+
+    /* ── LOCATIONS ────────────────────────────────────────────────── */
+    async function loadSaveLocations() {
+        try {
+            const response = await fetch('/api/browse-folders');
+            const data = await response.json();
+            if (data.success) {
+                const select = document.getElementById('locationSelect');
+                select.innerHTML = '<option value="">Choisir un emplacement…</option>';
+                data.locations.forEach(loc => {
+                    const opt = document.createElement('option');
+                    opt.value = loc.path;
+                    opt.textContent = loc.name;
+                    select.appendChild(opt);
+                });
+            }
+        } catch(e) { console.error(e); }
+    }
+
+    function getSelectedSaveLocation() {
+        const custom = document.getElementById('customLocationSection');
+        if (custom.classList.contains('hidden')) return '';
+        return document.getElementById('customPathInput').value ||
+               document.getElementById('locationSelect').value || '';
+    }
+
+    function browseFolder() {
+        const sel = document.getElementById('locationSelect');
+        if (sel.value) document.getElementById('customPathInput').value = sel.value;
+    }
+
+    /* ── LOAD PROJECTS ────────────────────────────────────────────── */
+    async function loadProjects() {
+        showLoading();
+        try {
+            const res  = await fetch('/api/projects');
+            const data = await res.json();
+            if (data.success) {
+                if (data.projects.length > 0) displayProjects(data.projects);
+                else showNoProjects();
+            } else {
+                showToast('Erreur', data.error, 'error');
+                showNoProjects();
+            }
+        } catch(e) {
+            showToast('Erreur de connexion', e.message, 'error');
+            showNoProjects();
+        }
+    }
+
+    function displayProjects(projects) {
+        const grid = document.getElementById('projectsGrid');
+        grid.innerHTML = '';
+        projects.forEach(p => grid.appendChild(createProjectCard(p)));
+        document.getElementById('projectCount').textContent = translateProjectCount(projects.length);
+        document.getElementById('loadingState').classList.add('hidden');
+        document.getElementById('projectsContainer').classList.remove('hidden');
+        document.getElementById('noProjectsState').classList.add('hidden');
+
+        applyI18n();
+}
+
+    function createProjectCard(project) {
+        const card = document.createElement('div');
+        card.className = 'project-card fade-in';
+        card.setAttribute('data-project-path', project.path);
+        const duration = formatDuration(project.duration);
+        const size     = formatFileSize(project.size_mb * 1024 * 1024);
+        
+        // Create cover URL using API endpoint
+        const encodedPath = encodeURIComponent(project.path);
+        const coverUrl = `/api/cover/${encodedPath}`;
+        
+        card.innerHTML = `
+            <div class="card-thumb" style="background-image: url('${coverUrl}'); background-size: cover; background-position: center;">
+                <div class="card-thumb-fallback" style="display: none;">
+                    <i class="fas fa-film card-thumb-icon"></i>
+                </div>
+                <span class="card-duration">${duration}</span>
+            </div>
+            <div class="card-body">
+                <div class="card-name" title="${escapeHtml(project.name)}">${escapeHtml(project.name)}</div>
+                <div class="card-meta">
+                    <span class="card-tag"><i class="fas fa-photo-video"></i>${project.media_count} médias</span>
+                    <span class="card-tag"><i class="fas fa-database"></i>${size}</span>
+                </div>
+                <button class="card-export-btn" onclick="exportProject('${project.path.replace(/\\/g, '\\\\')}', '${escapeHtml(project.name)}')">
+                    <i class="fas fa-file-export"></i> Exporter
+                </button>
+            </div>`;
+        
+        // Add error handling for cover image
+        const thumbElement = card.querySelector('.card-thumb');
+        const fallbackElement = card.querySelector('.card-thumb-fallback');
+        
+        const img = new Image();
+        img.onload = function() {
+            // Cover loaded successfully, hide fallback
+            if (fallbackElement) {
+                fallbackElement.style.display = 'none';
+            }
+        };
+        img.onerror = function() {
+            // Cover failed to load, show fallback
+            thumbElement.style.backgroundImage = '';
+            thumbElement.style.background = 'linear-gradient(135deg, #1a1d28, #242838)';
+            if (fallbackElement) {
+                fallbackElement.style.display = 'flex';
+            }
+        };
+        img.src = coverUrl;
+        
+        // Add right-click context menu
+        card.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+            showContextMenu(e, project);
+        });
+        
+        return card;
+    }
+
+    /* ── EXPORT FLOW ──────────────────────────────────────────────── */
+    function exportProject(path, name) {
+        currentProjectPath = path;
+        currentProjectName = name;
+        showExportModal();
+        resetExportModal();
+    }
+
+    async function prepareExport() {
+        if (!currentProjectPath) { showToast('Erreur', 'Aucun projet sélectionné', 'error'); return; }
+        document.getElementById('diagnosticSection').classList.remove('hidden');
+        document.getElementById('diagnosticResults').innerHTML = `
+            <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text-secondary);">
+                <i class="fas fa-spinner spin" style="color:var(--accent);"></i> Diagnostic en cours…
+            </div>`;
+        try {
+            const res  = await fetch('/api/prepare-export', { method:'POST', headers:{'Content-Type':'application/json'},
+                body: JSON.stringify({ project_path: currentProjectPath, save_location: getSelectedSaveLocation() }) });
+            const data = await res.json();
+            if (data.success) showDiagnosticResults(data.diagnostic);
+            else { showToast('Erreur de diagnostic', data.error, 'error'); document.getElementById('diagnosticSection').classList.add('hidden'); }
+        } catch(e) {
+            showToast('Erreur', e.message, 'error');
+            document.getElementById('diagnosticSection').classList.add('hidden');
+        }
+    }
+
+    function showDiagnosticResults(d) {
+        let html = '';
+
+        if (d.project_info) {
+            const i = d.project_info;
+            html += `<div class="info-box blue" style="margin-bottom:10px;">
+                <div class="info-box-title"><i class="fas fa-info-circle"></i> Informations du projet</div>
+                <div class="info-row"><span class="label">Nom</span><span class="value">${escapeHtml(i.name)}</span></div>
+                <div class="info-row"><span class="label">Durée</span><span class="value">${formatDuration(i.duration)}</span></div>
+                <div class="info-row"><span class="label">Médias</span><span class="value">${i.media_count}</span></div>
+                <div class="info-row"><span class="label">Taille</span><span class="value">${formatFileSize(i.size_mb*1024*1024)}</span></div>
+            </div>`;
+        }
+
+        if (d.file_checks && d.file_checks.draft_content) {
+            const fc = d.file_checks.draft_content;
+            const cls = fc.exists ? 'green' : 'red';
+            const ico = fc.exists ? 'fa-check-circle' : 'fa-times-circle';
+            html += `<div class="info-box ${cls}" style="margin-bottom:10px;">
+                <div class="info-box-title"><i class="fas ${ico}"></i> Vérification des fichiers</div>
+                <div class="info-box-content">draft_content.json : ${fc.exists ? 'Présent' : 'Manquant'}${fc.exists ? ` (${formatFileSize(fc.size)})` : ''}</div>
+            </div>`;
+        }
+
+        if (d.media_analysis) {
+            const m = d.media_analysis;
+            const hasMissing = m.missing_files && m.missing_files.length > 0;
+            html += `<div class="info-box ${hasMissing ? 'yellow' : 'green'}" style="margin-bottom:10px;">
+                <div class="info-box-title"><i class="fas fa-photo-video"></i> Analyse des médias</div>
+                <div class="info-box-content">
+                    Total : ${m.total_media} fichiers<br>
+                    ${hasMissing ? `
+                    <span style="color:var(--warning);">${m.missing_files.length} fichiers manquants</span><br>
+                    ${m.missing_files.slice(0,3).map(f => `• ${f.split('\\').pop()||f}`).join('<br>')}
+                    ${m.missing_files.length > 3 ? `<br>… et ${m.missing_files.length - 3} autres` : ''}
+                    <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;">
+                        <button onclick="handleMissingFiles('import')" class="cc-btn cc-btn-blue" style="font-size:11px;padding:6px 12px;">
+                            <i class="fas fa-upload"></i> Importer
+                        </button>
+                        <button onclick="handleMissingFiles('template')" class="cc-btn cc-btn-outline" style="font-size:11px;padding:6px 12px;color:var(--accent2);border-color:var(--accent2);">
+                            <i class="fas fa-file-alt"></i> Templates
+                        </button>
+                        <button onclick="forceExport()" class="cc-btn cc-btn-outline" style="font-size:11px;padding:6px 12px;color:var(--warning);border-color:var(--warning);">
+                            <i class="fas fa-forward"></i> Forcer
+                        </button>
+                    </div>` : '<span style="color:var(--success);">✓ Tous les médias présents</span>'}
+                </div>
+            </div>`;
+        }
+
+        if (d.issues && d.issues.length > 0 || d.warnings && d.warnings.length > 0) {
+            html += `<div class="info-box red" style="margin-bottom:10px;">
+                <div class="info-box-title"><i class="fas fa-exclamation-triangle"></i> Problèmes détectés</div>
+                <div class="info-box-content">
+                    ${(d.issues||[]).map(i => `<div style="color:var(--error);">✕ ${escapeHtml(i)}</div>`).join('')}
+                    ${(d.warnings||[]).map(w => `<div style="color:var(--warning);">⚠ ${escapeHtml(w)}</div>`).join('')}
+                </div>
+            </div>`;
+        }
+
+        const readyCls  = d.ready ? 'green' : 'red';
+        const readyIco  = d.ready ? 'fa-check-circle' : 'fa-times-circle';
+        const readyTxt  = d.ready ? 'Prêt pour l\'export' : 'Problèmes à résoudre';
+        html += `<div class="info-box ${readyCls}">
+            <div class="info-box-title"><i class="fas ${readyIco}"></i> ${readyTxt}</div>
+        </div>`;
+
+        document.getElementById('diagnosticResults').innerHTML = html;
+        const btn = document.getElementById('startExportBtn');
+        btn.disabled = !d.ready;
+
+        applyI18n();
+}
+
+    async function startActualExport() {
+        if (!currentProjectPath) { showToast('Erreur', 'Aucun projet sélectionné', 'error'); return; }
+        document.getElementById('diagnosticSection').classList.add('hidden');
+        document.getElementById('progressSection').classList.remove('hidden');
+        try {
+            const res  = await fetch('/api/export', { method:'POST', headers:{'Content-Type':'application/json'},
+                body: JSON.stringify({ project_path: currentProjectPath, create_zip: true, save_location: getSelectedSaveLocation() }) });
+            const data = await res.json();
+            if (data.success) {
+                currentExportId = data.export_id;
+                if (data.export_id) startRealTimeProgressTracking(data.export_id);
+                else showExportError('Export ID manquant dans la réponse');
+            } else showExportError(data.error);
+        } catch(e) { showExportError('Erreur lors de l\'export : ' + e.message); }
+    }
+
+    function showExportError(msg) {
+        document.getElementById('progressSection').classList.add('hidden');
+        showToast('Erreur d\'export', msg, 'error');
+    }
+
+    let progressPollingInterval = null;
+    function startRealTimeProgressTracking(id) {
+        if (progressPollingInterval) clearInterval(progressPollingInterval);
+        progressPollingInterval = setInterval(async () => {
+            try {
+                const res  = await fetch(`/api/progress/${id}`);
+                const data = await res.json();
+                if (data.success) {
+                    const p = data.progress;
+                    updateProgress(p.progress, p.message, p.details?.stage||'', p.details?.files_processed||0,
+                        p.details?.total_files||0, p.details?.current_file||'', p.details?.bytes_processed||0, p.details?.total_bytes||0);
+                    if (p.time_remaining !== undefined) updateTimeRemaining(p.time_remaining);
+                    if (p.status === 'completed') {
+                        clearInterval(progressPollingInterval); progressPollingInterval = null;
+                        if (data.download_info) showExportSuccess(data.download_info);
+                    } else if (p.status === 'failed') {
+                        clearInterval(progressPollingInterval); progressPollingInterval = null;
+                        showExportError(p.message || 'Échec de l\'export');
+                    }
+                }
+            } catch(e) { console.error(e); }
+        }, 500);
+    }
+
+    function updateTimeRemaining(s) {
+        const el = document.getElementById('timeRemaining');
+        if (el) el.textContent = s > 0 ? `Temps restant : ${Math.floor(s/60)}:${String(Math.floor(s%60)).padStart(2,'0')}` : '';
+    }
+
+    async function cancelCurrentExport() {
+        if (!currentExportId) { hideExportModal(); resetExportModal(); return; }
+        if (!confirm('Êtes-vous sûr de vouloir annuler cet export ?')) return;
+        try {
+            const res  = await fetch('/api/cancel-export', { method:'POST', headers:{'Content-Type':'application/json'},
+                body: JSON.stringify({ export_id: currentExportId }) });
+            const data = await res.json();
+            if (data.success) {
+                if (progressPollingInterval) { clearInterval(progressPollingInterval); progressPollingInterval = null; }
+                showToast('Annulé', data.message, 'success');
+                resetExportModal(); hideExportModal(); currentExportId = null;
+            } else showToast('Erreur', data.error, 'error');
+        } catch(e) { showToast('Erreur', e.message, 'error'); }
+    }
+
+    /* ── IMPORT FLOW ──────────────────────────────────────────────── */
+    let currentImportData = null, currentImportId = null, importProgressInterval = null;
+
+    function browseImportSource() { showToast('Info', 'Sélection de fichier en cours de développement', 'info'); }
+    function browseMediaLocation() { showToast('Info', 'Sélection de dossier en cours de développement', 'info'); }
+
+    async function analyzeImportSource() {
+        const src = document.getElementById('importSourcePath').value.trim();
+        if (!src) { showToast('Erreur', 'Veuillez spécifier un chemin source', 'error'); return; }
+        try {
+            showToast('Analyse', 'Analyse de la source en cours…', 'info');
+            const res  = await fetch('/api/import/analyze', { method:'POST', headers:{'Content-Type':'application/json'},
+                body: JSON.stringify({ source_path: src }) });
+            const data = await res.json();
+            if (data.success) { currentImportData = data.import_info; displayImportAnalysis(data.import_info); loadMediaLocationOptions(); }
+            else showToast('Erreur d\'analyse', data.error, 'error');
+        } catch(e) { showToast('Erreur', e.message, 'error'); }
+    }
+
+    function displayImportAnalysis(a) {
+        const box = document.getElementById('importAnalysisContent');
+        let html = `<div class="info-box-title"><i class="fas fa-folder"></i> Détails détectés</div>`;
+        html += `<div class="info-box-content">`;
+        html += `<div class="info-row"><span class="label">Type</span><span class="value">${a.type === 'zip' ? 'Fichier ZIP' : 'Dossier'}</span></div>`;
+        if (a.project_name) html += `<div class="info-row"><span class="label">Nom</span><span class="value">${escapeHtml(a.project_name)}</span></div>`;
+        if (a.media_count > 0) html += `<div class="info-row"><span class="label">Médias</span><span class="value">${a.media_count}</span></div>`;
+        if (a.export_info?.version) html += `<div class="info-row"><span class="label">Version</span><span class="value">${a.export_info.version}</span></div>`;
+        if (a.draft_info?.duration) html += `<div class="info-row"><span class="label">Durée</span><span class="value">${formatDuration(a.draft_info.duration)}</span></div>`;
+        html += `</div>`;
+        box.innerHTML = html;
+        document.getElementById('importProjectName').value = a.project_name || '';
+        document.getElementById('importAnalysis').classList.remove('hidden');
+        document.getElementById('importConfig').classList.remove('hidden');
+        document.getElementById('importStartSection').classList.remove('hidden');
+    }
+
+    async function loadMediaLocationOptions() {
+        const pname = document.getElementById('importProjectName').value || 'ImportedProject';
+        try {
+            const cfg = await fetch('/api/config/capcut-path');
+            const cd  = await cfg.json();
+            if (cd.success && cd.path) {
+                const res  = await fetch('/api/import/media-options', { method:'POST', headers:{'Content-Type':'application/json'},
+                    body: JSON.stringify({ project_name: pname, capcut_draft_path: cd.path }) });
+                const data = await res.json();
+                if (data.success) {
+                    const sel = document.getElementById('importMediaLocation');
+                    sel.innerHTML = '<option value="">' + translateString('Choisir un emplacement…') + '</option>';
+                    data.options.forEach(o => { const opt = document.createElement('option'); opt.value = o.id; opt.textContent = o.name; opt.title = o.description; sel.appendChild(opt); });
+                    sel.addEventListener('change', function() {
+                        const cs = document.getElementById('customMediaPathSection');
+                        if (this.value === 'custom') cs.classList.remove('hidden'); else cs.classList.add('hidden');
+                    });
+                }
+            }
+        } catch(e) { console.error(e); }
+    }
+
+    async function startImportProcess() {
+        const src     = document.getElementById('importSourcePath').value.trim();
+        const name    = document.getElementById('importProjectName').value.trim();
+        const selVal  = document.getElementById('importMediaLocation').value;
+        const custPath = document.getElementById('customMediaPath').value.trim();
+        if (!src || !name) { showToast('Erreur', 'Veuillez remplir tous les champs requis', 'error'); return; }
+        let mediaLoc = '';
+        if (selVal === 'custom') {
+            if (!custPath) { showToast('Erreur', 'Veuillez spécifier un chemin personnalisé', 'error'); return; }
+            mediaLoc = custPath;
+        } else if (selVal) { mediaLoc = selVal; }
+        else { showToast('Erreur', 'Veuillez choisir un emplacement pour les médias', 'error'); return; }
+        try {
+            const cfg  = await fetch('/api/config/capcut-path');
+            const cd   = await cfg.json();
+            if (!cd.success || !cd.path) { showToast('Erreur', 'Impossible de trouver le chemin des drafts CapCut', 'error'); return; }
+            document.getElementById('importConfig').classList.add('hidden');
+            document.getElementById('importStartSection').classList.add('hidden');
+            document.getElementById('importProgress').classList.remove('hidden');
+            const res  = await fetch('/api/import/execute', { method:'POST', headers:{'Content-Type':'application/json'},
+                body: JSON.stringify({ source_path: src, project_name: name, media_location: mediaLoc, capcut_draft_path: cd.path }) });
+            const data = await res.json();
+            if (data.success) { currentImportId = data.import_id; startImportProgressTracking(data.import_id); }
+            else { showToast('Erreur', data.error, 'error'); resetImportInterface(); }
+        } catch(e) { showToast('Erreur', e.message, 'error'); resetImportInterface(); }
+    }
+
+    function startImportProgressTracking(id) {
+        if (importProgressInterval) clearInterval(importProgressInterval);
+        importProgressInterval = setInterval(async () => {
+            try {
+                const res  = await fetch(`/api/import/progress/${id}`);
+                const data = await res.json();
+                if (data.success) {
+                    const p = data.progress;
+                    updateImportProgress(p.progress, p.message, p.details?.stage||'');
+                    if (p.status === 'completed') { clearInterval(importProgressInterval); importProgressInterval = null; showImportSuccess(p); }
+                    else if (p.status === 'failed') { clearInterval(importProgressInterval); importProgressInterval = null; showToast('Import échoué', p.message||'Échec', 'error'); resetImportInterface(); }
+                }
+            } catch(e) { console.error(e); }
+        }, 500);
+    }
+
+    function updateImportProgress(pct, msg, stage) {
+        document.getElementById('importProgressBar').style.width = pct + '%';
+        document.getElementById('importProgressPercent').textContent = Math.floor(pct) + '%';
+        document.getElementById('importProgressText').textContent = translateDynamicText(msg);
+        document.getElementById('importCurrentStage').textContent = translateDynamicText(stage);
+    }
+
+    function showImportSuccess(p) {
+        document.getElementById('importProgress').classList.add('hidden');
+        document.getElementById('importResultContent').innerHTML = `
+            <div class="info-row"><span class="label">Projet importé</span><span class="value">${escapeHtml(p.project_path||'')}</span></div>
+            <div class="info-row"><span class="label">Médias</span><span class="value">${escapeHtml(p.media_path||'')}</span></div>
+            <div class="info-row"><span class="label">Fichiers copiés</span><span class="value">${p.files_copied||0}</span></div>`;
+        document.getElementById('importResult').classList.remove('hidden');
+        showToast('Import réussi', 'Le projet a été importé avec succès', 'success');
+    }
+
+    function openImportedProject() {
+        if (currentImportId) showToast('Info', 'Ouverture du projet…', 'info');
+    }
+
+    function resetImportInterface() {
+        if (importProgressInterval) { clearInterval(importProgressInterval); importProgressInterval = null; }
+        currentImportData = null; currentImportId = null;
+        document.getElementById('importSourcePath').value = '';
+        document.getElementById('importProjectName').value = '';
+        document.getElementById('importMediaLocation').innerHTML = '<option value="">' + translateString('Choisir un emplacement…') + '</option>';
+        document.getElementById('customMediaPath').value = '';
+        ['importAnalysis','importConfig','importStartSection','importProgress','importResult','customMediaPathSection']
+            .forEach(id => document.getElementById(id).classList.add('hidden'));
+        updateImportProgress(0, 'Préparation…', 'initialization');
+
+        applyI18n();
+}
+
+    /* ── EXPORT SUCCESS ───────────────────────────────────────────── */
+    function showExportSuccess(info) {
+        document.getElementById('progressSection').classList.add('hidden');
+        document.getElementById('exportResult').classList.remove('hidden');
+        if (info.type === 'direct') {
+            document.getElementById('exportDetails').innerHTML = `${translateString('Exporté vers :')}<br><strong>${escapeHtml(info.location)}</strong><br>${translateString('Fichier :')} <strong>${escapeHtml(info.filename)}</strong> (${formatFileSize(info.file_size)})`;
+            document.getElementById('downloadBtn').onclick = () => window.open(`file://${info.file_path}`, '_blank');
+            document.getElementById('downloadBtn').innerHTML = '<i class="fas fa-folder-open"></i> ' + translateString('Ouvrir le fichier');
+            document.getElementById('openFolderBtn').onclick = () => window.open(`file://${info.location}`, '_blank');
+        } else if (info.type === 'temp') {
+            document.getElementById('exportDetails').innerHTML = `${translateString('Fichier :')} <strong>${escapeHtml(info.filename)}</strong> (${formatFileSize(info.file_size)})`;
+            document.getElementById('downloadBtn').onclick = () => window.location.href = info.download_url;
+            document.getElementById('openFolderBtn').classList.add('hidden');
+        } else if (info.type === 'project') {
+            document.getElementById('exportDetails').innerHTML = `${translateString('Projet exporté vers :')}<br><strong>${escapeHtml(info.temp_path)}</strong>`;
+            document.getElementById('downloadBtn').onclick = () => window.open(`file://${info.temp_path}`, '_blank');
+            document.getElementById('downloadBtn').innerHTML = '<i class="fas fa-folder-open"></i> ' + translateString('Ouvrir le dossier');
+            document.getElementById('openFolderBtn').classList.add('hidden');
+        }
+
+        applyI18n();
+}
+
+    function downloadExport() {}
+    function openExportFolder() {}
+
+    /* ── MISSING FILES ────────────────────────────────────────────── */
+    async function handleMissingFiles(action) {
+        if (!currentProjectPath) { showToast('Erreur', 'Aucun projet sélectionné', 'error'); return; }
+        try {
+            const dr  = await fetch('/api/prepare-export', { method:'POST', headers:{'Content-Type':'application/json'},
+                body: JSON.stringify({ project_path: currentProjectPath, save_location: getSelectedSaveLocation() }) });
+            const dd  = await dr.json();
+            if (dd.success && dd.diagnostic.media_analysis) {
+                const mf = dd.diagnostic.media_analysis.missing_files;
+                if (!mf.length) { showToast('Info', 'Aucun fichier manquant', 'info'); return; }
+                showToast('Traitement', `${action === 'template' ? 'Création des templates' : 'Importation'} en cours…`, 'info');
+                const ir = await fetch('/api/import-missing-files', { method:'POST', headers:{'Content-Type':'application/json'},
+                    body: JSON.stringify({ project_path: currentProjectPath, missing_files: mf, action }) });
+                const id = await ir.json();
+                if (id.success) {
+                    const r = id.results;
+                    const msg = action === 'template' ? `${r.templates_created.length} templates créés` : `${r.imported.length} fichiers traités`;
+                    showToast('Succès', msg + (r.errors.length ? ` (${r.errors.length} erreurs)` : ''), 'success');
+                    prepareExport();
+                } else showToast('Erreur', id.error, 'error');
+            }
+        } catch(e) { showToast('Erreur', e.message, 'error'); }
+    }
+
+    function forceExport() {
+        if (!currentProjectPath) return;
+        const btn = document.getElementById('startExportBtn');
+        btn.disabled = false;
+        document.getElementById('diagnosticSection').classList.add('hidden');
+        document.getElementById('progressSection').classList.remove('hidden');
+        startActualExport();
+        showToast('Export forcé', 'Démarrage malgré les problèmes détectés', 'warning');
+    }
+
+    /* ── DIAGNOSE ─────────────────────────────────────────────────── */
+    async function diagnoseInstallation() {
+        try {
+            showToast('Diagnostic', 'Analyse de l\'installation CapCut…', 'info');
+            const res  = await fetch('/api/diagnose');
+            const data = await res.json();
+            if (data.success) displayDiagnosticInfo(data.diagnostic);
+            else showToast('Erreur', data.error, 'error');
+        } catch(e) { showToast('Erreur', e.message, 'error'); }
+    }
+
+    function displayDiagnosticInfo(d) {
+        document.getElementById('systemInfo').innerHTML = `
+            <div class="info-row"><span class="label">Utilisateur</span><span class="value">${escapeHtml(d.username)}</span></div>
+            <div class="info-row"><span class="label">LOCALAPPDATA</span><span class="value">${escapeHtml(d.localappdata)}</span></div>
+            <div class="info-row"><span class="label">APPDATA</span><span class="value">${escapeHtml(d.appdata)}</span></div>
+            ${d.capcut_exe ? `<div class="info-row"><span class="label">Exécutable</span><span class="value">${escapeHtml(d.capcut_exe)}</span></div>` : ''}
+            ${d.capcut_paths?.length ? `<div class="info-row"><span class="label">Chemins</span><span class="value">${d.capcut_paths.map(p => escapeHtml(p)).join('<br>')}</span></div>` : ''}`;
+
+        const issuesList = document.getElementById('issuesList');
+        if (d.issues?.length) {
+            document.getElementById('issuesContent').innerHTML = d.issues.map(i => `• ${escapeHtml(i)}`).join('<br>');
+            issuesList.classList.remove('hidden');
+        } else issuesList.classList.add('hidden');
+
+        const notesList = document.getElementById('notesList');
+        if (d.notes?.length) {
+            document.getElementById('notesContent').innerHTML = d.notes.map(n => `• ${escapeHtml(n)}`).join('<br>');
+            notesList.classList.remove('hidden');
+        } else notesList.classList.add('hidden');
+
+        const recsList = document.getElementById('recommendationsList');
+        if (d.recommendations?.length) {
+            document.getElementById('recommendationsContent').innerHTML = d.recommendations.map(r => `• ${escapeHtml(r)}`).join('<br>');
+            recsList.classList.remove('hidden');
+        } else recsList.classList.add('hidden');
+
+        document.getElementById('diagnosticInfo').classList.remove('hidden');
+        document.getElementById('diagnosticInfo').classList.add('fade-in');
+        showToast('Diagnostic terminé', 'Vérifiez les informations ci-dessous', 'success');
+
+        applyI18n();
+}
+
+    /* ── UI HELPERS ───────────────────────────────────────────────── */
+    function showLoading() {
+        document.getElementById('loadingState').classList.remove('hidden');
+        document.getElementById('projectsContainer').classList.add('hidden');
+        document.getElementById('noProjectsState').classList.add('hidden');
+
+        applyI18n();
+}
+    function showNoProjects() {
+        document.getElementById('loadingState').classList.add('hidden');
+        document.getElementById('projectsContainer').classList.add('hidden');
+        document.getElementById('noProjectsState').classList.remove('hidden');
+
+        applyI18n();
+}
+    function showExportModal() {
+        document.getElementById('exportModal').classList.remove('hidden');
+        document.getElementById('projectNameDisplay').textContent = translateDynamicText(currentProjectName || 'Projet inconnu');
+
+        applyI18n();
+}
+    function hideExportModal() { document.getElementById('exportModal').classList.add('hidden'); stopProgressTracking(); }
+    function closeExportModal() { document.getElementById('exportModal').classList.add('hidden'); }
+
+    function resetExportModal() {
+        if (progressPollingInterval) { clearInterval(progressPollingInterval); progressPollingInterval = null; }
+        currentExportId = null;
+        ['diagnosticSection','progressSection','exportResult'].forEach(id => document.getElementById(id).classList.add('hidden'));
+        document.getElementById('startExportBtn').disabled = true;
+        updateProgress(0, 'Préparation…', '', 0, 0, '', 0, 0);
+        document.getElementById('customLocationSection').classList.add('hidden');
+        document.getElementById('useTempBtn').classList.add('active');
+        document.getElementById('useCustomBtn').classList.remove('active');
+
+        applyI18n();
+}
+
+    let progressInterval = null;
+    function startProgressTracking() {
+        updateProgress(0, 'Préparation…', '', 0, 0, '', 0, 0);
+        let pct = 0;
+        progressInterval = setInterval(() => {
+            pct += Math.random() * 15;
+            if (pct > 90) pct = 90;
+            updateProgress(pct, pct < 30 ? 'Analyse' : pct < 60 ? 'Extraction' : 'Compression', '', Math.floor(pct*2.5), 250, '', Math.floor(pct*1e6), 1e8);
+        }, 1000);
+    }
+    function stopProgressTracking() { if (progressInterval) { clearInterval(progressInterval); progressInterval = null; } }
+
+    function updateProgress(pct, text, stage, fProc, fTotal, fCurrent, bProc, bTotal) {
+        document.getElementById('progressBar').style.width = pct + '%';
+        document.getElementById('progressPercent').textContent = Math.floor(pct) + '%';
+        document.getElementById('progressText').textContent = translateDynamicText(text);
+        if (stage && document.getElementById('currentStage')) document.getElementById('currentStage').textContent = translateDynamicText(stage);
+        if (document.getElementById('filesProcessed')) document.getElementById('filesProcessed').textContent = `${fProc} / ${fTotal}`;
+        if (document.getElementById('currentFile')) document.getElementById('currentFile').textContent = fCurrent || '—';
+        if (document.getElementById('dataProgress')) document.getElementById('dataProgress').textContent = `${formatFileSize(bProc)} / ${formatFileSize(bTotal)}`;
+    }
+
+    function showToast(title, message, type = 'success') {
+        const toast = document.getElementById('toast');
+        const icon  = document.getElementById('toastIcon');
+        document.getElementById('toastTitle').textContent   = title;
+        document.getElementById('toastMessage').textContent = message;
+        const colors = { success: 'var(--success)', error: 'var(--error)', warning: 'var(--warning)', info: 'var(--accent)' };
+        const icons  = { success: 'fa-check-circle', error: 'fa-exclamation-circle', warning: 'fa-exclamation-triangle', info: 'fa-info-circle' };
+        icon.className = `fas ${icons[type]||'fa-info-circle'} toast-icon`;
+        icon.style.color = colors[type] || 'var(--accent)';
+        toast.classList.remove('hidden');
+        setTimeout(() => toast.classList.add('hidden'), 5000);
+    }
+
+    async function cleanupTempFiles(tempPath) {
+        try {
+            await fetch('/api/cleanup', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ temp_path: tempPath }) });
+        } catch(e) { console.error(e); }
+    }
+
+    /* ── UTILS ────────────────────────────────────────────────────── */
+    function formatDuration(s) {
+        if (!s) return '0:00';
+        const h = Math.floor(s/3600), m = Math.floor((s%3600)/60), sec = Math.floor(s%60);
+        return h > 0 ? `${h}:${String(m).padStart(2,'0')}:${String(sec).padStart(2,'0')}` : `${m}:${String(sec).padStart(2,'0')}`;
+    }
+    function formatFileSize(bytes) {
+        if (!bytes) return '0 B';
+        const k = 1024, s = ['B','KB','MB','GB'], i = Math.floor(Math.log(bytes)/Math.log(k));
+        return parseFloat((bytes/Math.pow(k,i)).toFixed(1)) + ' ' + s[i];
+    }
+    function escapeHtml(t) {
+        if (!t) return '';
+        return String(t).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
+    }
+
+    function refreshProjects() { loadProjects(); }
+
+    /* ── PROJECT SEARCH ─────────────────────────────────────── */
+    let allProjects = []; // Store all projects for filtering
+
+    function filterProjects() {
+        const searchTerm = document.getElementById('projectSearch').value.toLowerCase();
+        const projectCards = document.querySelectorAll('.project-card');
+        
+        projectCards.forEach(card => {
+            const projectName = card.querySelector('.card-name').textContent.toLowerCase();
+            const projectPath = card.getAttribute('data-project-path') || '';
+            
+            const matchesSearch = projectName.includes(searchTerm) || 
+                               projectPath.toLowerCase().includes(searchTerm);
+            
+            if (matchesSearch) {
+                card.style.display = '';
+            } else {
+                card.style.display = 'none';
+            }
+        });
+        
+        // Update project count
+        const visibleCards = Array.from(projectCards).filter(card => card.style.display !== 'none');
+        document.getElementById('projectCount').textContent = 
+            visibleCards.length + ' projet' + (visibleCards.length !== 1 ? 's' : '') + ' trouvé' + (visibleCards.length !== 1 ? 's' : '');
+    }
+
+    /* ── CONTEXT MENU FUNCTIONS ─────────────────────────────────────── */
+    function showContextMenu(e, project) {
+        e.preventDefault();
+        contextMenuProject = project;
+        
+        const contextMenu = document.getElementById('contextMenu');
+        contextMenu.style.display = 'block';
+        
+        // Position the menu
+        let x = e.clientX;
+        let y = e.clientY;
+        
+        // Ensure menu doesn't go off screen
+        const menuWidth = 180;
+        const menuHeight = 160;
+        
+        if (x + menuWidth > window.innerWidth) {
+            x = window.innerWidth - menuWidth;
+        }
+        if (y + menuHeight > window.innerHeight) {
+            y = window.innerHeight - menuHeight;
+        }
+        
+        contextMenu.style.left = x + 'px';
+        contextMenu.style.top = y + 'px';
+    }
+
+    async function duplicateProject() {
+        if (!contextMenuProject) return;
+        
+        try {
+            const response = await fetch('/api/duplicate-project', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    path: contextMenuProject.path,
+                    name: contextMenuProject.name
+                })
+            });
+            
+            const data = await response.json();
+            if (data.success) {
+                showToast('Succès', 'Projet dupliqué avec succès', 'success');
+                loadProjects(); // Refresh the project list
+            } else {
+                showToast('Erreur', data.error || 'Erreur lors de la duplication', 'error');
+            }
+        } catch(e) {
+            console.error('Error duplicating project:', e);
+            showToast('Erreur', 'Impossible de dupliquer le projet', 'error');
+        }
+        
+        hideContextMenu();
+    }
+
+    async function deleteProject() {
+        if (!contextMenuProject) return;
+        
+        if (!confirm(`Êtes-vous sûr de vouloir supprimer le projet "${contextMenuProject.name}" ? Cette action est irréversible.`)) {
+            return;
+        }
+        
+        try {
+            const response = await fetch('/api/delete-project', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    path: contextMenuProject.path
+                })
+            });
+            
+            const data = await response.json();
+            if (data.success) {
+                showToast('Succès', 'Projet supprimé avec succès', 'success');
+                loadProjects(); // Refresh the project list
+            } else {
+                showToast('Erreur', data.error || 'Erreur lors de la suppression', 'error');
+            }
+        } catch(e) {
+            console.error('Error deleting project:', e);
+            showToast('Erreur', 'Impossible de supprimer le projet', 'error');
+        }
+        
+        hideContextMenu();
+    }
+
+    async function openProjectFolder() {
+        if (!contextMenuProject) return;
+        
+        try {
+            const response = await fetch('/api/open-folder', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    path: contextMenuProject.path
+                })
+            });
+            
+            const data = await response.json();
+            if (!data.success) {
+                showToast('Erreur', data.error || 'Erreur lors de l\'ouverture du dossier', 'error');
+            }
+        } catch(e) {
+            console.error('Error opening folder:', e);
+            showToast('Erreur', 'Impossible d\'ouvrir le dossier', 'error');
+        }
+        
+        hideContextMenu();
+    }
+
+    function showProjectProperties() {
+        if (!contextMenuProject) return;
+        
+        const project = contextMenuProject;
+        const size = formatFileSize(project.size_mb * 1024 * 1024);
+        const duration = formatDuration(project.duration);
+        
+        const properties = `
+Nom: ${project.name}
+Chemin: ${project.path}
+Taille: ${size}
+Nombre de médias: ${project.media_count}
+Durée: ${duration}
+Date de modification: ${new Date(project.modified_time).toLocaleString('fr-FR')}
+        `.trim();
+        
+        alert(properties);
+        hideContextMenu();
+    }
+
+    function hideContextMenu() {
+        document.getElementById('contextMenu').style.display = 'none';
+        contextMenuProject = null;
+    }
+
+    /* ── SETTINGS FUNCTIONS ─────────────────────────────────────────── */
+    function showSettings() {
+        setMode('settings');
+        // Activate settings icon in sidebar
+        document.querySelectorAll('.sidebar-icon').forEach(icon => icon.classList.remove('active'));
+        document.querySelectorAll('.sidebar-icon')[2].classList.add('active');
+        
+        // Load settings only if not already loaded
+        if (!settingsLoaded) {
+            loadSettings();
+        }
+    }
+
+    async function loadSettings() {
+        try {
+            // Try to load from params.json file
+            let settings = null;
+            try {
+                const response = await fetch('/api/load-params');
+                const data = await response.json();
+                if (data.success && data.settings) {
+                    settings = data.settings;
+                    console.log('Paramètres chargés depuis params.json');
+                }
+            } catch(e) {
+                console.log('Fichier params.json non trouvé, utilisation des paramètres par défaut');
+            }
+
+            // Default settings if no file found
+            if (!settings) {
+                settings = {
+                    language: 'en',
+                    theme: 'dark',
+                    default_save_path: '',
+                    capcut_draft_path: '',
+                    capcut_exe_path: '',
+                    compression_format: 'zip',
+                    compression_level: 'normal',
+                    auto_cleanup: false,
+                    include_templates: false,
+                    process_timeout: 300,
+                    max_file_size: 1024,
+                    debug_mode: false,
+                    auto_detect: true
+                };
+            }
+
+            applySettings(settings);
+            setUILanguage(settings.language || currentUILanguage, false);
+            
+            // Also save to localStorage as backup
+            localStorage.setItem('capcut_settings', JSON.stringify(settings));
+            
+            // Mark settings as loaded
+            settingsLoaded = true;
+            
+        } catch(e) {
+            console.error('Erreur lors du chargement des paramètres:', e);
+            showToast('Erreur', 'Impossible de charger les paramètres', 'error');
+        }
+    }
+
+    function applySettings(settings) {
+        // General settings
+        const languageSelect = document.getElementById('settingsLanguage');
+        const requestedLanguage = settings.language || 'en';
+        if (languageSelect) {
+            languageSelect.value = requestedLanguage;
+        }
+        setUILanguage(requestedLanguage, false);
+        document.getElementById('settingsTheme').value = settings.theme || 'dark';
+        document.getElementById('settingsDefaultSavePath').value = settings.default_save_path || '';
+        
+        // Apply theme immediately
+        applyTheme(settings.theme || 'dark');
+        
+        // CapCut paths
+        document.getElementById('settingsCapcutDraftPath').value = settings.capcut_draft_path || '';
+        document.getElementById('settingsCapcutExePath').value = settings.capcut_exe_path || '';
+        
+        // Export settings
+        document.getElementById('settingsCompressionFormat').value = settings.compression_format || 'zip';
+        document.getElementById('settingsCompressionLevel').value = settings.compression_level || 'normal';
+        document.getElementById('settingsAutoCleanup').checked = settings.auto_cleanup || false;
+        document.getElementById('settingsIncludeTemplates').checked = settings.include_templates || false;
+        
+        // Advanced settings
+        document.getElementById('settingsProcessTimeout').value = settings.process_timeout || 300;
+        document.getElementById('settingsMaxFileSize').value = settings.max_file_size || 1024;
+        document.getElementById('settingsDebugMode').checked = settings.debug_mode || false;
+        document.getElementById('settingsAutoDetect').checked = settings.auto_detect !== false; // default to true
+    }
+
+    function applyTheme(theme) {
+        if (theme === 'light') {
+            document.documentElement.setAttribute('data-theme', 'light');
+        } else {
+            document.documentElement.removeAttribute('data-theme');
+        }
+    }
+
+    async function saveSettings() {
+        const settings = {
+            language: document.getElementById('settingsLanguage').value,
+            theme: document.getElementById('settingsTheme').value,
+            default_save_path: document.getElementById('settingsDefaultSavePath').value,
+            capcut_draft_path: document.getElementById('settingsCapcutDraftPath').value,
+            capcut_exe_path: document.getElementById('settingsCapcutExePath').value,
+            compression_format: document.getElementById('settingsCompressionFormat').value,
+            compression_level: document.getElementById('settingsCompressionLevel').value,
+            auto_cleanup: document.getElementById('settingsAutoCleanup').checked,
+            include_templates: document.getElementById('settingsIncludeTemplates').checked,
+            process_timeout: parseInt(document.getElementById('settingsProcessTimeout').value),
+            max_file_size: parseInt(document.getElementById('settingsMaxFileSize').value),
+            debug_mode: document.getElementById('settingsDebugMode').checked,
+            auto_detect: document.getElementById('settingsAutoDetect').checked
+        };
+
+        // Apply theme immediately
+        applyTheme(settings.theme);
+        setUILanguage(settings.language || 'en', false);
+
+        // Save to localStorage as backup
+        localStorage.setItem('capcut_settings', JSON.stringify(settings));
+
+        // Save to params.json file
+        try {
+            const response = await fetch('/api/save-params', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(settings)
+            });
+            const data = await response.json();
+            if (data.success) {
+                showToast('Succès', 'Paramètres sauvegardés dans params.json', 'success');
+                console.log('Paramètres sauvegardés dans params.json');
+            } else {
+                showToast('Erreur', data.error || 'Erreur lors de la sauvegarde', 'error');
+            }
+        } catch(e) {
+            console.error('Erreur lors de la sauvegarde dans params.json:', e);
+            showToast('Avertissement', 'Paramètres sauvegardés localement uniquement', 'warning');
+        }
+    }
+
+    function browseDefaultSavePath() {
+        showToast('Info', 'Sélection de dossier en cours de développement', 'info');
+    }
+
+    function browseCapcutDraftPath() {
+        showToast('Info', 'Sélection de dossier en cours de développement', 'info');
+    }
+
+    function browseCapcutExePath() {
+        showToast('Info', 'Sélection de fichier en cours de développement', 'info');
+    }
+
+    async function testPaths() {
+        const draftPath = document.getElementById('settingsCapcutDraftPath').value;
+        const exePath = document.getElementById('settingsCapcutExePath').value;
+        const savePath = document.getElementById('settingsDefaultSavePath').value;
+
+        if (!draftPath && !exePath && !savePath) {
+            showToast('Erreur', 'Veuillez configurer au moins un chemin', 'error');
+            return;
+        }
+
+        try {
+            const response = await fetch('/api/test-paths', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    draft_path: draftPath,
+                    exe_path: exePath,
+                    save_path: savePath
+                })
+            });
+            const data = await response.json();
+            if (data.success) {
+                let message = 'Test des chemins terminé:\n';
+                if (data.results.draft_path !== undefined) {
+                    message += `• Drafts: ${data.results.draft_path ? '✓ Valide' : '✗ Invalide'}\n`;
+                }
+                if (data.results.exe_path !== undefined) {
+                    message += `• Exécutable: ${data.results.exe_path ? '✓ Valide' : '✗ Invalide'}\n`;
+                }
+                if (data.results.save_path !== undefined) {
+                    message += `• Sauvegarde: ${data.results.save_path ? '✓ Valide' : '✗ Invalide'}`;
+                }
+                showToast('Test terminé', message, 'success');
+            } else {
+                showToast('Erreur', data.error || 'Erreur lors du test', 'error');
+            }
+        } catch(e) {
+            console.error('Erreur lors du test des chemins:', e);
+            showToast('Erreur', 'Impossible de tester les chemins', 'error');
+        }
+    }
+
+    async function resetSettings() {
+        if (!confirm('Êtes-vous sûr de vouloir réinitialiser tous les paramètres ?')) return;
+        
+        // Default settings
+        const defaultSettings = {
+            language: 'en',
+            theme: 'dark',
+            default_save_path: '',
+            capcut_draft_path: '',
+            capcut_exe_path: '',
+            compression_format: 'zip',
+            compression_level: 'normal',
+            auto_cleanup: false,
+            include_templates: false,
+            process_timeout: 300,
+            max_file_size: 1024,
+            debug_mode: false,
+            auto_detect: true
+        };
+        
+        // Apply default settings
+        applySettings(defaultSettings);
+        
+        // Save to localStorage as backup
+        localStorage.setItem('capcut_settings', JSON.stringify(defaultSettings));
+        
+        // Save to params.json file
+        try {
+            const response = await fetch('/api/save-params', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(defaultSettings)
+            });
+            const data = await response.json();
+            if (data.success) {
+                showToast('Info', 'Paramètres réinitialisés et sauvegardés', 'info');
+                console.log('Paramètres réinitialisés sauvegardés dans params.json');
+            } else {
+                showToast('Info', 'Paramètres réinitialisés localement', 'info');
+            }
+        } catch(e) {
+            console.error('Erreur lors de la sauvegarde dans params.json:', e);
+            showToast('Info', 'Paramètres réinitialisés localement', 'info');
+        }
+        
+        // Keep settingsLoaded as true since we just applied settings
+        settingsLoaded = true;
+    }
+
+    async function exportSettings() {
+        const settings = {
+            language: document.getElementById('settingsLanguage').value,
+            theme: document.getElementById('settingsTheme').value,
+            default_save_path: document.getElementById('settingsDefaultSavePath').value,
+            capcut_draft_path: document.getElementById('settingsCapcutDraftPath').value,
+            capcut_exe_path: document.getElementById('settingsCapcutExePath').value,
+            compression_format: document.getElementById('settingsCompressionFormat').value,
+            compression_level: document.getElementById('settingsCompressionLevel').value,
+            auto_cleanup: document.getElementById('settingsAutoCleanup').checked,
+            include_templates: document.getElementById('settingsIncludeTemplates').checked,
+            process_timeout: parseInt(document.getElementById('settingsProcessTimeout').value),
+            max_file_size: parseInt(document.getElementById('settingsMaxFileSize').value),
+            debug_mode: document.getElementById('settingsDebugMode').checked,
+            auto_detect: document.getElementById('settingsAutoDetect').checked
+        };
+
+        // Save to params.json file
+        try {
+            const response = await fetch('/api/save-params', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(settings)
+            });
+            const data = await response.json();
+            if (data.success) {
+                showToast('Succès', 'Configuration sauvegardée dans params.json', 'success');
+                console.log('Configuration exportée dans params.json');
+            } else {
+                showToast('Erreur', data.error || 'Erreur lors de l\'export', 'error');
+            }
+        } catch(e) {
+            console.error('Erreur lors de l\'export dans params.json:', e);
+            showToast('Erreur', 'Impossible d\'exporter la configuration', 'error');
+        }
+
+        // Also offer download
+        const dataStr = JSON.stringify(settings, null, 2);
+        const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+        
+        const exportFileDefaultName = 'capcut-settings.json';
+        
+        const linkElement = document.createElement('a');
+        linkElement.setAttribute('href', dataUri);
+        linkElement.setAttribute('download', exportFileDefaultName);
+        linkElement.click();
+    }
+
+    function importSettings() {
+        showToast('Info', 'Importation de configuration en cours de développement', 'info');
+    }
+</script>
+</body>
+</html>

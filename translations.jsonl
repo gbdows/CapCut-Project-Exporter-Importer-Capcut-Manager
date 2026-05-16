@@ -1,0 +1,93 @@
+{"source": "CapCut Project Manager", "en": "CapCut Project Manager", "fr": "Gestionnaire de projets CapCut", "es": "Administrador de proyectos CapCut", "ja": "CapCutプロジェクトマネージャー", "zh_CN": "CapCut 项目管理器"}
+{"source": "CapCut Manager", "en": "CapCut Manager", "fr": "Gestionnaire CapCut", "es": "Administrador CapCut", "ja": "CapCutマネージャー", "zh_CN": "CapCut 管理器"}
+{"source": "Gestionnaire de projets", "en": "Project manager", "fr": "Gestionnaire de projets", "es": "Administrador de proyectos", "ja": "プロジェクトマネージャー", "zh_CN": "项目管理器"}
+{"source": "Projets", "en": "Projects", "fr": "Projets", "es": "Proyectos", "ja": "プロジェクト", "zh_CN": "项目"}
+{"source": "Import", "en": "Import", "fr": "Import", "es": "Importar", "ja": "インポート", "zh_CN": "导入"}
+{"source": "Params", "en": "Settings", "fr": "Paramètres", "es": "Configuración", "ja": "設定", "zh_CN": "设置"}
+{"source": "Diag", "en": "Diagnostics", "fr": "Diagnostic", "es": "Diagnóstico", "ja": "診断", "zh_CN": "诊断"}
+{"source": "Sync", "en": "Sync", "fr": "Synchronisation", "es": "Sincronización", "ja": "同期", "zh_CN": "同步"}
+{"source": "Recherche des projets…", "en": "Search projects…", "fr": "Recherche des projets…", "es": "Buscar proyectos…", "ja": "プロジェクトを検索…", "zh_CN": "搜索项目…"}
+{"source": "Détection automatique des projets CapCut installés sur votre machine.", "en": "Automatic detection of CapCut projects installed on your machine.", "fr": "Détection automatique des projets CapCut installés sur votre machine.", "es": "Detección automática de proyectos CapCut instalados en su equipo.", "ja": "インストール済みのCapCutプロジェクトを自動検出します。", "zh_CN": "自动检测您电脑上安装的 CapCut 项目。"}
+{"source": "Projets détectés", "en": "Detected projects", "fr": "Projets détectés", "es": "Proyectos detectados", "ja": "検出されたプロジェクト", "zh_CN": "检测到的项目"}
+{"source": "— projets trouvés", "en": "— projects found", "fr": "— projets trouvés", "es": "— proyectos encontrados", "ja": "— 件のプロジェクトが見つかりました", "zh_CN": "— 个项目已找到"}
+{"source": "Synchronisé", "en": "Synced", "fr": "Synchronisé", "es": "Sincronizado", "ja": "同期済み", "zh_CN": "已同步"}
+{"source": "Aucun projet trouvé", "en": "No project found", "fr": "Aucun projet trouvé", "es": "No se encontró ningún proyecto", "ja": "プロジェクトが見つかりません", "zh_CN": "未找到项目"}
+{"source": "Assurez-vous que CapCut est installé et que vous avez créé des projets.", "en": "Make sure CapCut is installed and you created projects.", "fr": "Assurez-vous que CapCut est installé et que vous avez créé des projets.", "es": "Asegúrese de que CapCut esté instalado y de haber creado proyectos.", "ja": "CapCut がインストールされ、プロジェクトが作成されていることを確認してください。", "zh_CN": "请确保已安装 CapCut 并创建了项目。"}
+{"source": "Réessayer", "en": "Retry", "fr": "Réessayer", "es": "Reintentar", "ja": "再試行", "zh_CN": "重试"}
+{"source": "Diagnostic système", "en": "System diagnostics", "fr": "Diagnostic système", "es": "Diagnóstico del sistema", "ja": "システム診断", "zh_CN": "系统诊断"}
+{"source": "Informations système", "en": "System information", "fr": "Informations système", "es": "Información del sistema", "ja": "システム情報", "zh_CN": "系统信息"}
+{"source": "Problèmes détectés", "en": "Detected issues", "fr": "Problèmes détectés", "es": "Problemas detectados", "ja": "検出された問題", "zh_CN": "检测到的问题"}
+{"source": "Notes", "en": "Notes", "fr": "Notes", "es": "Notas", "ja": "メモ", "zh_CN": "备注"}
+{"source": "Recommandations", "en": "Recommendations", "fr": "Recommandations", "es": "Recomendaciones", "ja": "推奨事項", "zh_CN": "建议"}
+{"source": "Importer un projet", "en": "Import a project", "fr": "Importer un projet", "es": "Importar un proyecto", "ja": "プロジェクトをインポート", "zh_CN": "导入项目"}
+{"source": "Réinitialiser", "en": "Reset", "fr": "Réinitialiser", "es": "Restablecer", "ja": "リセット", "zh_CN": "重置"}
+{"source": "Source du projet", "en": "Project source", "fr": "Source du projet", "es": "Fuente del proyecto", "ja": "プロジェクトソース", "zh_CN": "项目来源"}
+{"source": "Fichier ZIP ou dossier", "en": "ZIP file or folder", "fr": "Fichier ZIP ou dossier", "es": "Archivo ZIP o carpeta", "ja": "ZIPファイルまたはフォルダー", "zh_CN": "ZIP 文件或文件夹"}
+{"source": "Analyser la source", "en": "Analyze source", "fr": "Analyser la source", "es": "Analizar fuente", "ja": "ソースを解析", "zh_CN": "分析来源"}
+{"source": "Informations du projet", "en": "Project information", "fr": "Informations du projet", "es": "Información del proyecto", "ja": "プロジェクト情報", "zh_CN": "项目信息"}
+{"source": "Détails détectés", "en": "Detected details", "fr": "Détails détectés", "es": "Detalles detectados", "ja": "検出された詳細", "zh_CN": "检测到的详细信息"}
+{"source": "Configuration", "en": "Configuration", "fr": "Configuration", "es": "Configuración", "ja": "設定", "zh_CN": "配置"}
+{"source": "Nom du projet", "en": "Project name", "fr": "Nom du projet", "es": "Nombre del proyecto", "ja": "プロジェクト名", "zh_CN": "项目名称"}
+{"source": "Emplacement des médias", "en": "Media location", "fr": "Emplacement des médias", "es": "Ubicación de medios", "ja": "メディアの場所", "zh_CN": "媒体位置"}
+{"source": "Choisir un emplacement…", "en": "Choose a location…", "fr": "Choisir un emplacement…", "es": "Elegir una ubicación…", "ja": "場所を選択…", "zh_CN": "选择位置…"}
+{"source": "Chemin personnalisé", "en": "Custom path", "fr": "Chemin personnalisé", "es": "Ruta personalizada", "ja": "カスタムパス", "zh_CN": "自定义路径"}
+{"source": "Démarrer l'import", "en": "Start import", "fr": "Démarrer l'import", "es": "Iniciar importación", "ja": "インポート開始", "zh_CN": "开始导入"}
+{"source": "Import en cours…", "en": "Importing…", "fr": "Import en cours…", "es": "Importando…", "ja": "インポート中…", "zh_CN": "正在导入…"}
+{"source": "Préparation…", "en": "Preparing…", "fr": "Préparation…", "es": "Preparando…", "ja": "準備中…", "zh_CN": "准备中…"}
+{"source": "Initialisation", "en": "Initialization", "fr": "Initialisation", "es": "Inicialización", "ja": "初期化", "zh_CN": "初始化"}
+{"source": "Import réussi !", "en": "Import successful!", "fr": "Import réussi !", "es": "¡Importación correcta!", "ja": "インポート成功！", "zh_CN": "导入成功！"}
+{"source": "Ouvrir le projet", "en": "Open project", "fr": "Ouvrir le projet", "es": "Abrir proyecto", "ja": "プロジェクトを開く", "zh_CN": "打开项目"}
+{"source": "Nouvel import", "en": "New import", "fr": "Nouvel import", "es": "Nueva importación", "ja": "新しいインポート", "zh_CN": "新的导入"}
+{"source": "Paramètres", "en": "Settings", "fr": "Paramètres", "es": "Configuración", "ja": "設定", "zh_CN": "设置"}
+{"source": "Sauvegarder", "en": "Save", "fr": "Sauvegarder", "es": "Guardar", "ja": "保存", "zh_CN": "保存"}
+{"source": "Paramètres généraux", "en": "General settings", "fr": "Paramètres généraux", "es": "Configuración general", "ja": "一般設定", "zh_CN": "常规设置"}
+{"source": "Langue", "en": "Language", "fr": "Langue", "es": "Idioma", "ja": "言語", "zh_CN": "语言"}
+{"source": "Français", "en": "French", "fr": "Français", "es": "Francés", "ja": "フランス語", "zh_CN": "法语"}
+{"source": "English", "en": "English", "fr": "Anglais", "es": "Inglés", "ja": "英語", "zh_CN": "英语"}
+{"source": "Español", "en": "Spanish", "fr": "Español", "es": "Español", "ja": "スペイン語", "zh_CN": "西班牙语"}
+{"source": "日本語", "en": "Japanese", "fr": "Japonais", "es": "Japonés", "ja": "日本語", "zh_CN": "日语"}
+{"source": "简体中文", "en": "Simplified Chinese", "fr": "Chinois simplifié", "es": "Chino simplificado", "ja": "簡体字中国語", "zh_CN": "简体中文"}
+{"source": "Thème", "en": "Theme", "fr": "Thème", "es": "Tema", "ja": "テーマ", "zh_CN": "主题"}
+{"source": "Sombre", "en": "Dark", "fr": "Sombre", "es": "Oscuro", "ja": "ダーク", "zh_CN": "深色"}
+{"source": "Clair", "en": "Light", "fr": "Clair", "es": "Claro", "ja": "ライト", "zh_CN": "浅色"}
+{"source": "Dossier de sauvegarde par défaut", "en": "Default backup folder", "fr": "Dossier de sauvegarde par défaut", "es": "Carpeta de copia predeterminada", "ja": "デフォルト保存フォルダー", "zh_CN": "默认备份文件夹"}
+{"source": "Chemins CapCut", "en": "CapCut paths", "fr": "Chemins CapCut", "es": "Rutas de CapCut", "ja": "CapCutのパス", "zh_CN": "CapCut 路径"}
+{"source": "Chemin des drafts CapCut", "en": "CapCut drafts path", "fr": "Chemin des drafts CapCut", "es": "Ruta de borradores de CapCut", "ja": "CapCutドラフトパス", "zh_CN": "CapCut 草稿路径"}
+{"source": "Chemin d'installation CapCut", "en": "CapCut installation path", "fr": "Chemin d'installation CapCut", "es": "Ruta de instalación de CapCut", "ja": "CapCutインストールパス", "zh_CN": "CapCut 安装路径"}
+{"source": "Paramètres d'export", "en": "Export settings", "fr": "Paramètres d'export", "es": "Configuración de exportación", "ja": "エクスポート設定", "zh_CN": "导出设置"}
+{"source": "Format de compression", "en": "Compression format", "fr": "Format de compression", "es": "Formato de compresión", "ja": "圧縮形式", "zh_CN": "压缩格式"}
+{"source": "Niveau de compression", "en": "Compression level", "fr": "Niveau de compression", "es": "Nivel de compresión", "ja": "圧縮レベル", "zh_CN": "压缩级别"}
+{"source": "Rapide", "en": "Fast", "fr": "Rapide", "es": "Rápido", "ja": "高速", "zh_CN": "快速"}
+{"source": "Normal", "en": "Normal", "fr": "Normal", "es": "Normal", "ja": "標準", "zh_CN": "标准"}
+{"source": "Maximum", "en": "Maximum", "fr": "Maximum", "es": "Máximo", "ja": "最大", "zh_CN": "最大"}
+{"source": "Nettoyer automatiquement les fichiers temporaires", "en": "Automatically clean temporary files", "fr": "Nettoyer automatiquement les fichiers temporaires", "es": "Limpiar automáticamente los archivos temporales", "ja": "一時ファイルを自動的に削除", "zh_CN": "自动清理临时文件"}
+{"source": "Inclure les templates dans l'export", "en": "Include templates in export", "fr": "Inclure les templates dans l'export", "es": "Incluir plantillas en la exportación", "ja": "テンプレートをエクスポートに含める", "zh_CN": "在导出中包含模板"}
+{"source": "Paramètres avancés", "en": "Advanced settings", "fr": "Paramètres avancés", "es": "Configuración avanzada", "ja": "詳細設定", "zh_CN": "高级设置"}
+{"source": "Timeout de traitement (secondes)", "en": "Processing timeout (seconds)", "fr": "Timeout de traitement (secondes)", "es": "Tiempo de espera de procesamiento (segundos)", "ja": "処理タイムアウト（秒）", "zh_CN": "处理超时（秒）"}
+{"source": "Taille max des fichiers (MB)", "en": "Max file size (MB)", "fr": "Taille max des fichiers (MB)", "es": "Tamaño máximo de archivo (MB)", "ja": "最大ファイルサイズ（MB）", "zh_CN": "最大文件大小（MB）"}
+{"source": "Mode debug (logs détaillés)", "en": "Debug mode (detailed logs)", "fr": "Mode debug (logs détaillés)", "es": "Modo depuración (registros detallados)", "ja": "デバッグモード（詳細ログ）", "zh_CN": "调试模式（详细日志）"}
+{"source": "Détection automatique des projets au démarrage", "en": "Automatic project detection on startup", "fr": "Détection automatique des projets au démarrage", "es": "Detección automática de proyectos al iniciar", "ja": "起動時にプロジェクトを自動検出", "zh_CN": "启动时自动检测项目"}
+{"source": "Actions", "en": "Actions", "fr": "Actions", "es": "Acciones", "ja": "アクション", "zh_CN": "操作"}
+{"source": "Tester les chemins", "en": "Test paths", "fr": "Tester les chemins", "es": "Probar rutas", "ja": "パスをテスト", "zh_CN": "测试路径"}
+{"source": "Exporter config", "en": "Export config", "fr": "Exporter config", "es": "Exportar configuración", "ja": "設定をエクスポート", "zh_CN": "导出配置"}
+{"source": "Importer config", "en": "Import config", "fr": "Importer config", "es": "Importar configuración", "ja": "設定をインポート", "zh_CN": "导入配置"}
+{"source": "Export du projet", "en": "Project export", "fr": "Export du projet", "es": "Exportación del proyecto", "ja": "プロジェクトのエクスポート", "zh_CN": "项目导出"}
+{"source": "Emplacement de sauvegarde", "en": "Save location", "fr": "Emplacement de sauvegarde", "es": "Ubicación de guardado", "ja": "保存場所", "zh_CN": "保存位置"}
+{"source": "Temporaire", "en": "Temporary", "fr": "Temporaire", "es": "Temporal", "ja": "一時", "zh_CN": "临时"}
+{"source": "Personnalisé", "en": "Custom", "fr": "Personnalisé", "es": "Personalizado", "ja": "カスタム", "zh_CN": "自定义"}
+{"source": "Préparer l'export", "en": "Prepare export", "fr": "Préparer l'export", "es": "Preparar exportación", "ja": "エクスポートを準備", "zh_CN": "准备导出"}
+{"source": "Démarrer", "en": "Start", "fr": "Démarrer", "es": "Iniciar", "ja": "開始", "zh_CN": "开始"}
+{"source": "Diagnostic du projet", "en": "Project diagnostics", "fr": "Diagnostic du projet", "es": "Diagnóstico del proyecto", "ja": "プロジェクト診断", "zh_CN": "项目诊断"}
+{"source": "Progression de l'export", "en": "Export progress", "fr": "Progression de l'export", "es": "Progreso de exportación", "ja": "エクスポート進行状況", "zh_CN": "导出进度"}
+{"source": "Étape", "en": "Step", "fr": "Étape", "es": "Paso", "ja": "ステップ", "zh_CN": "步骤"}
+{"source": "Fichiers", "en": "Files", "fr": "Fichiers", "es": "Archivos", "ja": "ファイル", "zh_CN": "文件"}
+{"source": "Fichier actuel", "en": "Current file", "fr": "Fichier actuel", "es": "Archivo actual", "ja": "現在のファイル", "zh_CN": "当前文件"}
+{"source": "Données", "en": "Data", "fr": "Données", "es": "Datos", "ja": "データ", "zh_CN": "数据"}
+{"source": "Export réussi !", "en": "Export successful!", "fr": "Export réussi !", "es": "¡Exportación exitosa!", "ja": "エクスポート成功！", "zh_CN": "导出成功！"}
+{"source": "Télécharger le ZIP", "en": "Download ZIP", "fr": "Télécharger le ZIP", "es": "Descargar ZIP", "ja": "ZIPをダウンロード", "zh_CN": "下载 ZIP"}
+{"source": "Ouvrir le dossier", "en": "Open folder", "fr": "Ouvrir le dossier", "es": "Abrir carpeta", "ja": "フォルダーを開く", "zh_CN": "打开文件夹"}
+{"source": "Nouvel export", "en": "New export", "fr": "Nouvel export", "es": "Nueva exportación", "ja": "新しいエクスポート", "zh_CN": "新的导出"}
+{"source": "Annuler", "en": "Cancel", "fr": "Annuler", "es": "Cancelar", "ja": "キャンセル", "zh_CN": "取消"}
+{"source": "Dupliquer", "en": "Duplicate", "fr": "Dupliquer", "es": "Duplicar", "ja": "複製", "zh_CN": "复制"}
+{"source": "Propriétés", "en": "Properties", "fr": "Propriétés", "es": "Propiedades", "ja": "プロパティ", "zh_CN": "属性"}
+{"source": "Supprimer", "en": "Delete", "fr": "Supprimer", "es": "Eliminar", "ja": "削除", "zh_CN": "删除"}
