@@ -8,6 +8,7 @@
 
 > ⚠️ **Important Warning**: This tool is **not affiliated with CapCut** or Bytedance. Always verify that imported projects work correctly in CapCut **before** deleting your original project files. The tool may fail in some cases, and data loss can occur if you delete originals without verification.
 
+Last version: B v1.0.1
 ---
 
 ## 🌟 Features
@@ -171,16 +172,17 @@ portable_capcut_project/
 
 ```text
 .
-├── capcut_exporter.py           # Core export functionality
-├── capcut_importer.py           # Core import functionality
-├── capcut_detector.py           # CapCut project detection
-├── web_server.py                # Flask web server with REST API
-├── index.html                   # Web interface (self-contained)
-├── params.json                  # Configuration file
-├── translations.jsonl           # UI translations
-├── requirements.txt             # Python dependencies
-├── start.bat                    # Windows startup script
-└── README.md                    # This file
+├── capcut_exporter.py
+├── capcut_importer.py
+├── capcut_detector.py
+├── web_server.py
+├── templates/
+│   └── index.html
+├── params.json
+├── translations.jsonl
+├── requirements.txt
+├── start.bat
+└── README.md
 ```
 
 ---
