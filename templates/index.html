@@ -806,6 +806,300 @@
             .projects-grid { grid-template-columns: 1fr 1fr; }
             .sidebar { display: none; }
         }
+
+        /* ─── NOTIFICATIONS ─────────────────────────────────────────── */
+        .notif-btn {
+            position: relative;
+            width: 34px; height: 34px;
+            display: flex; align-items: center; justify-content: center;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            background: transparent;
+            color: var(--text-secondary);
+            font-size: 14px;
+            cursor: pointer;
+            transition: all .18s;
+        }
+        .notif-btn:hover { background: var(--bg-hover); color: var(--text-primary); border-color: var(--border-light); }
+        .notif-badge {
+            position: absolute;
+            top: -4px; right: -4px;
+            background: var(--error);
+            color: #fff;
+            font-size: 9px;
+            font-weight: 800;
+            min-width: 16px; height: 16px;
+            border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
+            padding: 0 3px;
+            border: 2px solid var(--bg-panel);
+            letter-spacing: 0;
+            animation: badgePop .25s cubic-bezier(.34,1.56,.64,1);
+        }
+        @keyframes badgePop {
+            from { transform: scale(0); }
+            to { transform: scale(1); }
+        }
+        .notif-badge.hidden { display: none; }
+
+        .notif-panel {
+            position: fixed;
+            top: 52px; right: 12px;
+            width: 380px;
+            max-height: 540px;
+            background: var(--bg-panel);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            box-shadow: 0 24px 64px rgba(0,0,0,.48);
+            z-index: 5000;
+            display: flex; flex-direction: column;
+            overflow: hidden;
+            animation: panelSlide .2s cubic-bezier(.4,0,.2,1);
+        }
+        .notif-panel.hidden { display: none; }
+        @keyframes panelSlide {
+            from { opacity: 0; transform: translateY(-10px) scale(.97); }
+            to   { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        .notif-panel-header {
+            padding: 14px 18px 12px;
+            border-bottom: 1px solid var(--border);
+            display: flex; align-items: center; justify-content: space-between;
+            flex-shrink: 0;
+        }
+        .notif-panel-title {
+            font-size: 13px; font-weight: 800; color: var(--text-primary);
+            display: flex; align-items: center; gap: 8px;
+        }
+        .notif-panel-title i { color: var(--accent); font-size: 13px; }
+        .notif-panel-actions {
+            display: flex; align-items: center; gap: 6px;
+        }
+        .notif-clear-btn {
+            font-size: 11px; font-weight: 600; color: var(--text-muted);
+            background: transparent; border: none; cursor: pointer;
+            padding: 4px 8px; border-radius: 6px;
+            transition: all .15s;
+            font-family: inherit;
+        }
+        .notif-clear-btn:hover { background: var(--bg-hover); color: var(--accent); }
+
+        .notif-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 6px 0;
+        }
+        .notif-list::-webkit-scrollbar { width: 4px; }
+        .notif-list::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
+
+        .notif-item {
+            display: flex; align-items: flex-start; gap: 12px;
+            padding: 10px 18px;
+            transition: background .15s;
+            position: relative;
+            cursor: default;
+        }
+        .notif-item:hover { background: var(--bg-hover); }
+        .notif-item.unread::before {
+            content: '';
+            position: absolute;
+            left: 7px; top: 50%;
+            transform: translateY(-50%);
+            width: 5px; height: 5px;
+            border-radius: 50%;
+            background: var(--accent);
+        }
+        .notif-icon {
+            width: 32px; height: 32px;
+            border-radius: 9px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 13px;
+            flex-shrink: 0;
+            margin-top: 1px;
+        }
+        .notif-icon.success { background: var(--success-dim); color: var(--success); }
+        .notif-icon.error   { background: var(--error-dim);   color: var(--error);   }
+        .notif-icon.warning { background: var(--warning-dim); color: var(--warning); }
+        .notif-icon.info    { background: var(--accent-dim);  color: var(--accent);  }
+
+        .notif-item-body { flex: 1; min-width: 0; }
+        .notif-item-title {
+            font-size: 12px; font-weight: 700; color: var(--text-primary);
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        }
+        .notif-item-msg {
+            font-size: 11px; color: var(--text-secondary);
+            margin-top: 1px; line-height: 1.4;
+            display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        .notif-item-time {
+            font-size: 10px; color: var(--text-muted);
+            margin-top: 3px; font-weight: 500;
+        }
+        .notif-empty {
+            padding: 40px 20px;
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 12px;
+        }
+        .notif-empty i { font-size: 28px; margin-bottom: 10px; display: block; opacity: .4; }
+        .notif-panel-footer {
+            padding: 8px 18px 10px;
+            border-top: 1px solid var(--border);
+            flex-shrink: 0;
+        }
+        .notif-count-label {
+            font-size: 11px; color: var(--text-muted); text-align: center; font-weight: 500;
+        }
+
+        /* ─── DIAGNOSTIC MODAL ──────────────────────────────────────── */
+        .diag-modal-overlay {
+            position: fixed; inset: 0;
+            background: rgba(0,0,0,.72);
+            display: flex; align-items: center; justify-content: center;
+            z-index: 2000;
+            backdrop-filter: blur(4px);
+            animation: fadeInOverlay .2s ease;
+        }
+        .diag-modal-overlay.hidden { display: none; }
+        @keyframes fadeInOverlay {
+            from { opacity: 0; } to { opacity: 1; }
+        }
+        .diag-modal {
+            background: var(--bg-panel);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            width: 100%;
+            max-width: 540px;
+            margin: 16px;
+            max-height: 88vh;
+            display: flex; flex-direction: column;
+            box-shadow: 0 32px 80px rgba(0,0,0,.6);
+            animation: diagModalIn .25s cubic-bezier(.34,1.56,.64,1);
+        }
+        @keyframes diagModalIn {
+            from { opacity: 0; transform: scale(.94) translateY(10px); }
+            to   { opacity: 1; transform: scale(1) translateY(0); }
+        }
+        .diag-modal-header {
+            padding: 20px 24px 16px;
+            border-bottom: 1px solid var(--border);
+            display: flex; align-items: center; justify-content: space-between;
+            flex-shrink: 0;
+        }
+        .diag-modal-title-wrap { display: flex; align-items: center; gap: 12px; }
+        .diag-modal-icon {
+            width: 38px; height: 38px;
+            border-radius: 11px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 16px;
+        }
+        .diag-modal-icon.ok    { background: var(--success-dim); color: var(--success); }
+        .diag-modal-icon.issues{ background: var(--error-dim);   color: var(--error);   }
+        .diag-modal-title { font-size: 15px; font-weight: 800; color: var(--text-primary); }
+        .diag-modal-sub   { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+        .diag-modal-close {
+            width: 30px; height: 30px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            background: transparent;
+            color: var(--text-muted);
+            cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 13px;
+            transition: all .18s;
+        }
+        .diag-modal-close:hover { background: var(--error-dim); border-color: var(--error); color: var(--error); }
+        .diag-modal-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px 24px;
+            display: flex; flex-direction: column; gap: 14px;
+        }
+        .diag-modal-body::-webkit-scrollbar { width: 4px; }
+        .diag-modal-body::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
+        .diag-modal-footer {
+            padding: 14px 24px;
+            border-top: 1px solid var(--border);
+            display: flex; justify-content: flex-end; gap: 10px;
+            flex-shrink: 0;
+        }
+
+        /* All-good banner */
+        .diag-all-good {
+            display: flex; flex-direction: column; align-items: center; gap: 14px;
+            padding: 32px 20px;
+            text-align: center;
+        }
+        .diag-all-good-icon {
+            width: 64px; height: 64px;
+            border-radius: 20px;
+            background: var(--success-dim);
+            border: 1px solid rgba(34,201,133,.3);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 26px;
+            color: var(--success);
+        }
+        .diag-all-good-title {
+            font-size: 16px; font-weight: 800; color: var(--text-primary);
+        }
+        .diag-all-good-sub {
+            font-size: 13px; color: var(--text-secondary); line-height: 1.6; max-width: 300px;
+        }
+
+        .diag-issue-row {
+            display: flex; align-items: flex-start; gap: 10px;
+            padding: 9px 12px;
+            border-radius: 8px;
+            background: var(--error-dim);
+            border: 1px solid rgba(240,80,96,.18);
+            font-size: 12px; color: var(--text-primary); line-height: 1.5;
+        }
+        .diag-issue-row i { color: var(--error); margin-top: 1px; flex-shrink: 0; }
+
+        .diag-warn-row {
+            display: flex; align-items: flex-start; gap: 10px;
+            padding: 9px 12px;
+            border-radius: 8px;
+            background: var(--warning-dim);
+            border: 1px solid rgba(245,166,35,.18);
+            font-size: 12px; color: var(--text-primary); line-height: 1.5;
+        }
+        .diag-warn-row i { color: var(--warning); margin-top: 1px; flex-shrink: 0; }
+
+        .diag-note-row {
+            display: flex; align-items: flex-start; gap: 10px;
+            padding: 9px 12px;
+            border-radius: 8px;
+            background: var(--accent-dim);
+            border: 1px solid rgba(0,207,192,.18);
+            font-size: 12px; color: var(--text-primary); line-height: 1.5;
+        }
+        .diag-note-row i { color: var(--accent); margin-top: 1px; flex-shrink: 0; }
+
+        .diag-rec-row {
+            display: flex; align-items: flex-start; gap: 10px;
+            padding: 9px 12px;
+            border-radius: 8px;
+            background: var(--success-dim);
+            border: 1px solid rgba(34,201,133,.18);
+            font-size: 12px; color: var(--text-primary); line-height: 1.5;
+        }
+        .diag-rec-row i { color: var(--success); margin-top: 1px; flex-shrink: 0; }
+
+        .diag-section-label {
+            font-size: 10px; font-weight: 700; color: var(--text-muted);
+            text-transform: uppercase; letter-spacing: .6px;
+            margin-bottom: 6px; margin-top: 4px;
+        }
+
+        .diag-sysinfo {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 12px 14px;
+        }
     </style>
 </head>
 <body>
@@ -820,7 +1114,65 @@
     <span class="topbar-title">Gestionnaire de projets</span>
     <div class="topbar-spacer"></div>
 
-    <span class="topbar-version">v1.0.0</span>
+    <span class="topbar-version">B v1.0.1</span>
+
+    <!-- Notifications Button -->
+    <button class="notif-btn" id="notifBtn" onclick="toggleNotifications()" title="Notifications">
+        <i class="fas fa-bell"></i>
+        <span class="notif-badge hidden" id="notifBadge">0</span>
+    </button>
+</div>
+
+<!-- ════ NOTIFICATION PANEL ══════════════════════════════════════════ -->
+<div id="notifPanel" class="notif-panel hidden">
+    <div class="notif-panel-header">
+        <div class="notif-panel-title">
+            <i class="fas fa-bell"></i>
+            <span>Notifications</span>
+        </div>
+        <div class="notif-panel-actions">
+            <button class="notif-clear-btn" onclick="markAllRead()">Tout marquer comme lu</button>
+            <button class="notif-clear-btn" onclick="clearAllNotifications()" style="color:var(--error);">Effacer tout</button>
+        </div>
+    </div>
+    <div class="notif-list" id="notifList">
+        <div class="notif-empty" id="notifEmpty">
+            <i class="fas fa-bell-slash"></i>
+            Aucune notification
+        </div>
+    </div>
+    <div class="notif-panel-footer">
+        <div class="notif-count-label" id="notifCountLabel"></div>
+    </div>
+</div>
+
+<!-- ════ DIAGNOSTIC MODAL ════════════════════════════════════════════ -->
+<div id="diagModal" class="diag-modal-overlay hidden">
+    <div class="diag-modal">
+        <div class="diag-modal-header">
+            <div class="diag-modal-title-wrap">
+                <div class="diag-modal-icon" id="diagModalIcon">
+                    <i class="fas fa-stethoscope"></i>
+                </div>
+                <div>
+                    <div class="diag-modal-title" id="diagModalTitle">Diagnostic système</div>
+                    <div class="diag-modal-sub" id="diagModalSub">Analyse de l'installation CapCut</div>
+                </div>
+            </div>
+            <button class="diag-modal-close" onclick="closeDiagnosticModal()"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="diag-modal-body" id="diagModalBody">
+            <!-- Filled dynamically -->
+        </div>
+        <div class="diag-modal-footer">
+            <button class="cc-btn cc-btn-ghost" onclick="closeDiagnosticModal()">
+                <i class="fas fa-times"></i> Fermer
+            </button>
+            <button class="cc-btn cc-btn-accent" onclick="diagnoseInstallation()">
+                <i class="fas fa-redo-alt"></i> Relancer
+            </button>
+        </div>
+    </div>
 </div>
 
 <!-- ════ APP BODY ════════════════════════════════════════════════════ -->
@@ -1074,7 +1426,7 @@
                         <div class="form-grid">
                             <div>
                                 <label class="cc-label">Langue</label>
-                                <select id="settingsLanguage" class="cc-select">
+                                <select id="settingsLanguage" class="cc-select" data-i18n-skip="true">
                                     <option value="fr">Français</option>
                                     <option value="en">English</option>
                                 </select>
@@ -1419,11 +1771,6 @@ const I18N_JSONL_EMBEDDED = `{"source": "CapCut Project Manager", "en": "CapCut 
 {"source": "Sauvegarder", "en": "Save", "fr": "Sauvegarder", "es": "Guardar", "ja": "保存", "zh_CN": "保存"}
 {"source": "Paramètres généraux", "en": "General settings", "fr": "Paramètres généraux", "es": "Configuración general", "ja": "一般設定", "zh_CN": "常规设置"}
 {"source": "Langue", "en": "Language", "fr": "Langue", "es": "Idioma", "ja": "言語", "zh_CN": "语言"}
-{"source": "Français", "en": "French", "fr": "Français", "es": "Francés", "ja": "フランス語", "zh_CN": "法语"}
-{"source": "English", "en": "English", "fr": "Anglais", "es": "Inglés", "ja": "英語", "zh_CN": "英语"}
-{"source": "Español", "en": "Spanish", "fr": "Español", "es": "Español", "ja": "スペイン語", "zh_CN": "西班牙语"}
-{"source": "日本語", "en": "Japanese", "fr": "Japonais", "es": "Japonés", "ja": "日本語", "zh_CN": "日语"}
-{"source": "简体中文", "en": "Simplified Chinese", "fr": "Chinois simplifié", "es": "Chino simplificado", "ja": "簡体字中国語", "zh_CN": "简体中文"}
 {"source": "Thème", "en": "Theme", "fr": "Thème", "es": "Tema", "ja": "テーマ", "zh_CN": "主题"}
 {"source": "Sombre", "en": "Dark", "fr": "Sombre", "es": "Oscuro", "ja": "ダーク", "zh_CN": "深色"}
 {"source": "Clair", "en": "Light", "fr": "Clair", "es": "Claro", "ja": "ライト", "zh_CN": "浅色"}
@@ -1468,7 +1815,137 @@ const I18N_JSONL_EMBEDDED = `{"source": "CapCut Project Manager", "en": "CapCut 
 {"source": "Dupliquer", "en": "Duplicate", "fr": "Dupliquer", "es": "Duplicar", "ja": "複製", "zh_CN": "复制"}
 {"source": "Propriétés", "en": "Properties", "fr": "Propriétés", "es": "Propiedades", "ja": "プロパティ", "zh_CN": "属性"}
 {"source": "Supprimer", "en": "Delete", "fr": "Supprimer", "es": "Eliminar", "ja": "削除", "zh_CN": "删除"}
-`;
+{"source": "Importer", "en": "Import", "fr": "Importer", "es": "Importar", "ja": "インポート", "zh_CN": "导入"}
+{"source": "Diagnostic", "en": "Diagnostics", "fr": "Diagnostic", "es": "Diagnóstico", "ja": "診断", "zh_CN": "诊断"}
+{"source": "Rafraîchir", "en": "Refresh", "fr": "Rafraîchir", "es": "Actualizar", "ja": "更新", "zh_CN": "刷新"}
+{"source": "Rechercher des projets...", "en": "Search projects...", "fr": "Rechercher des projets...", "es": "Buscar proyectos...", "ja": "プロジェクトを検索...", "zh_CN": "搜索项目..."}
+{"source": "Chemin vers le fichier ZIP ou dossier…", "en": "Path to the ZIP file or folder…", "fr": "Chemin vers le fichier ZIP ou dossier…", "es": "Ruta al archivo ZIP o carpeta…", "ja": "ZIPファイルまたはフォルダーへのパス…", "zh_CN": "ZIP 文件或文件夹路径…"}
+{"source": "Nom du projet…", "en": "Project name…", "fr": "Nom du projet…", "es": "Nombre del proyecto…", "ja": "プロジェクト名…", "zh_CN": "项目名称…"}
+{"source": "Chemin personnalisé…", "en": "Custom path…", "fr": "Chemin personnalisé…", "es": "Ruta personalizada…", "ja": "カスタムパス…", "zh_CN": "自定义路径…"}
+{"source": "Chemin par défaut pour les exports…", "en": "Default export path…", "fr": "Chemin par défaut pour les exports…", "es": "Ruta de exportación predeterminada…", "ja": "デフォルトのエクスポート先…", "zh_CN": "默认导出路径…"}
+{"source": "Chemin vers les drafts CapCut…", "en": "Path to CapCut drafts…", "fr": "Chemin vers les drafts CapCut…", "es": "Ruta a los borradores de CapCut…", "ja": "CapCutドラフトへのパス…", "zh_CN": "CapCut 草稿路径…"}
+{"source": "Chemin vers l'exécutable CapCut…", "en": "Path to the CapCut executable…", "fr": "Chemin vers l'exécutable CapCut…", "es": "Ruta al ejecutable de CapCut…", "ja": "CapCut 実行ファイルへのパス…", "zh_CN": "CapCut 可执行文件路径…"}
+{"source": "CapCut Paths", "en": "CapCut Paths", "fr": "Chemins CapCut", "es": "Rutas de CapCut", "ja": "CapCut のパス", "zh_CN": "CapCut 路径"}
+{"source": "Export Settings", "en": "Export Settings", "fr": "Paramètres d'export", "es": "Configuración de exportación", "ja": "エクスポート設定", "zh_CN": "导出设置"}
+{"source": "Templates", "en": "Templates", "fr": "Templates", "es": "Plantillas", "ja": "テンプレート", "zh_CN": "模板"}
+{"source": "Forcer", "en": "Force", "fr": "Forcer", "es": "Forzar", "ja": "強制", "zh_CN": "强制"}
+{"source": "Analyse", "en": "Analysis", "fr": "Analyse", "es": "Análisis", "ja": "分析", "zh_CN": "分析"}
+{"source": "Avertissement", "en": "Warning", "fr": "Avertissement", "es": "Advertencia", "ja": "警告", "zh_CN": "警告"}
+{"source": "Annulé", "en": "Cancelled", "fr": "Annulé", "es": "Cancelado", "ja": "キャンセル済み", "zh_CN": "已取消"}
+{"source": "Aucun fichier manquant", "en": "No missing files", "fr": "Aucun fichier manquant", "es": "No hay archivos faltantes", "ja": "欠落ファイルはありません", "zh_CN": "没有缺失文件"}
+{"source": "Aucun projet sélectionné", "en": "No project selected", "fr": "Aucun projet sélectionné", "es": "Ningún proyecto seleccionado", "ja": "プロジェクトが選択されていません", "zh_CN": "未选择项目"}
+{"source": "Configuration sauvegardée dans params.json", "en": "Configuration saved to params.json", "fr": "Configuration sauvegardée dans params.json", "es": "Configuración guardada en params.json", "ja": "設定を params.json に保存しました", "zh_CN": "配置已保存到 params.json"}
+{"source": "Création des templates", "en": "Creating templates", "fr": "Création des templates", "es": "Creando plantillas", "ja": "テンプレートを作成中", "zh_CN": "正在创建模板"}
+{"source": "Diagnostic terminé", "en": "Diagnostics complete", "fr": "Diagnostic terminé", "es": "Diagnóstico terminado", "ja": "診断完了", "zh_CN": "诊断完成"}
+{"source": "Démarrage malgré les problèmes détectés", "en": "Starting despite detected issues", "fr": "Démarrage malgré les problèmes détectés", "es": "Iniciando pese a los problemas detectados", "ja": "検出された問題があっても開始します", "zh_CN": "尽管检测到问题仍继续开始"}
+{"source": "Erreur", "en": "Error", "fr": "Erreur", "es": "Error", "ja": "エラー", "zh_CN": "错误"}
+{"source": "Erreur de connexion", "en": "Connection error", "fr": "Erreur de connexion", "es": "Error de conexión", "ja": "接続エラー", "zh_CN": "连接错误"}
+{"source": "Erreur de diagnostic", "en": "Diagnostic error", "fr": "Erreur de diagnostic", "es": "Error de diagnóstico", "ja": "診断エラー", "zh_CN": "诊断错误"}
+{"source": "Erreur lors de la sauvegarde", "en": "Error while saving", "fr": "Erreur lors de la sauvegarde", "es": "Error al guardar", "ja": "保存中にエラー", "zh_CN": "保存时出错"}
+{"source": "Erreur lors de la duplication", "en": "Error while duplicating", "fr": "Erreur lors de la duplication", "es": "Error al duplicar", "ja": "複製中にエラー", "zh_CN": "复制时出错"}
+{"source": "Erreur lors de la suppression", "en": "Error while deleting", "fr": "Erreur lors de la suppression", "es": "Error al eliminar", "ja": "削除中にエラー", "zh_CN": "删除时出错"}
+{"source": "Erreur lors du test", "en": "Error during test", "fr": "Erreur lors du test", "es": "Error durante la prueba", "ja": "テスト中にエラー", "zh_CN": "测试时出错"}
+{"source": "Erreur lors de l'export", "en": "Error during export", "fr": "Erreur lors de l'export", "es": "Error durante la exportación", "ja": "エクスポート中にエラー", "zh_CN": "导出时出错"}
+{"source": "Erreur d'analyse", "en": "Analysis error", "fr": "Erreur d'analyse", "es": "Error de análisis", "ja": "解析エラー", "zh_CN": "分析错误"}
+{"source": "Erreur d'export", "en": "Export error", "fr": "Erreur d'export", "es": "Error de exportación", "ja": "エクスポートエラー", "zh_CN": "导出错误"}
+{"source": "Export forcé", "en": "Forced export", "fr": "Export forcé", "es": "Exportación forzada", "ja": "強制エクスポート", "zh_CN": "强制导出"}
+{"source": "Exporté vers :", "en": "Exported to:", "fr": "Exporté vers :", "es": "Exportado a:", "ja": "書き出し先:", "zh_CN": "导出到："}
+{"source": "Fichier :", "en": "File:", "fr": "Fichier :", "es": "Archivo:", "ja": "ファイル:", "zh_CN": "文件："}
+{"source": "Import réussi", "en": "Import successful", "fr": "Import réussi", "es": "Importación exitosa", "ja": "インポート成功", "zh_CN": "导入成功"}
+{"source": "Import échoué", "en": "Import failed", "fr": "Import échoué", "es": "Importación fallida", "ja": "インポート失敗", "zh_CN": "导入失败"}
+{"source": "Importation", "en": "Importing", "fr": "Importation", "es": "Importación", "ja": "インポート", "zh_CN": "导入"}
+{"source": "Importation de configuration en cours de développement", "en": "Configuration import under development", "fr": "Importation de configuration en cours de développement", "es": "Importación de configuración en desarrollo", "ja": "設定のインポートは開発中です", "zh_CN": "配置导入开发中"}
+{"source": "Impossible d'exporter la configuration", "en": "Unable to export configuration", "fr": "Impossible d'exporter la configuration", "es": "No se puede exportar la configuración", "ja": "設定をエクスポートできません", "zh_CN": "无法导出配置"}
+{"source": "Impossible d'ouvrir le dossier", "en": "Unable to open the folder", "fr": "Impossible d'ouvrir le dossier", "es": "No se puede abrir la carpeta", "ja": "フォルダーを開けません", "zh_CN": "无法打开文件夹"}
+{"source": "Impossible de charger les paramètres", "en": "Unable to load settings", "fr": "Impossible de charger les paramètres", "es": "No se pueden cargar los ajustes", "ja": "設定を読み込めません", "zh_CN": "无法加载设置"}
+{"source": "Impossible de dupliquer le projet", "en": "Unable to duplicate the project", "fr": "Impossible de dupliquer le projet", "es": "No se puede duplicar el proyecto", "ja": "プロジェクトを複製できません", "zh_CN": "无法复制项目"}
+{"source": "Impossible de supprimer le projet", "en": "Unable to delete the project", "fr": "Impossible de supprimer le projet", "es": "No se puede eliminar el proyecto", "ja": "プロジェクトを削除できません", "zh_CN": "无法删除项目"}
+{"source": "Impossible de tester les chemins", "en": "Unable to test the paths", "fr": "Impossible de tester les chemins", "es": "No se pueden probar las rutas", "ja": "パスをテストできません", "zh_CN": "无法测试路径"}
+{"source": "Impossible de trouver le chemin des drafts CapCut", "en": "Unable to find the CapCut drafts path", "fr": "Impossible de trouver le chemin des drafts CapCut", "es": "No se puede encontrar la ruta de borradores de CapCut", "ja": "CapCutドラフトのパスが見つかりません", "zh_CN": "无法找到 CapCut 草稿路径"}
+{"source": "Info", "en": "Info", "fr": "Info", "es": "Información", "ja": "情報", "zh_CN": "信息"}
+{"source": "Le projet a été importé avec succès", "en": "The project was imported successfully", "fr": "Le projet a été importé avec succès", "es": "El proyecto se importó correctamente", "ja": "プロジェクトのインポートに成功しました", "zh_CN": "项目已成功导入"}
+{"source": "Ouverture du projet…", "en": "Opening project…", "fr": "Ouverture du projet…", "es": "Abriendo proyecto…", "ja": "プロジェクトを開いています…", "zh_CN": "正在打开项目…"}
+{"source": "Ouvrir le fichier", "en": "Open file", "fr": "Ouvrir le fichier", "es": "Abrir archivo", "ja": "ファイルを開く", "zh_CN": "打开文件"}
+{"source": "Paramètres réinitialisés et sauvegardés", "en": "Settings reset and saved", "fr": "Paramètres réinitialisés et sauvegardés", "es": "Ajustes restablecidos y guardados", "ja": "設定をリセットして保存しました", "zh_CN": "设置已重置并保存"}
+{"source": "Paramètres réinitialisés localement", "en": "Settings reset locally", "fr": "Paramètres réinitialisés localement", "es": "Ajustes restablecidos localmente", "ja": "設定をローカルでリセットしました", "zh_CN": "已在本地重置设置"}
+{"source": "Paramètres sauvegardés dans params.json", "en": "Settings saved to params.json", "fr": "Paramètres sauvegardés dans params.json", "es": "Ajustes guardados en params.json", "ja": "params.json に保存しました", "zh_CN": "已保存到 params.json"}
+{"source": "Paramètres sauvegardés localement uniquement", "en": "Settings saved locally only", "fr": "Paramètres sauvegardés localement uniquement", "es": "Ajustes guardados solo localmente", "ja": "ローカルにのみ保存されました", "zh_CN": "仅本地保存设置"}
+{"source": "Projet dupliqué avec succès", "en": "Project duplicated successfully", "fr": "Projet dupliqué avec succès", "es": "Proyecto duplicado correctamente", "ja": "プロジェクトを複製しました", "zh_CN": "项目已成功复制"}
+{"source": "Projet exporté vers :", "en": "Project exported to:", "fr": "Projet exporté vers :", "es": "Proyecto exportado a:", "ja": "プロジェクトの書き出し先:", "zh_CN": "项目导出到："}
+{"source": "Projet inconnu", "en": "Unknown project", "fr": "Projet inconnu", "es": "Proyecto desconocido", "ja": "不明なプロジェクト", "zh_CN": "未知项目"}
+{"source": "Projet supprimé avec succès", "en": "Project deleted successfully", "fr": "Projet supprimé avec succès", "es": "Proyecto eliminado correctamente", "ja": "プロジェクトを削除しました", "zh_CN": "项目已成功删除"}
+{"source": "Succès", "en": "Success", "fr": "Succès", "es": "Éxito", "ja": "成功", "zh_CN": "成功"}
+{"source": "Sélection de dossier en cours de développement", "en": "Folder selection is under development", "fr": "Sélection de dossier en cours de développement", "es": "Selector de carpeta en desarrollo", "ja": "フォルダー選択は開発中です", "zh_CN": "文件夹选择开发中"}
+{"source": "Sélection de fichier en cours de développement", "en": "File selection is under development", "fr": "Sélection de fichier en cours de développement", "es": "Selector de archivo en desarrollo", "ja": "ファイル選択は開発中です", "zh_CN": "文件选择开发中"}
+{"source": "Test terminé", "en": "Test complete", "fr": "Test terminé", "es": "Prueba finalizada", "ja": "テスト完了", "zh_CN": "测试完成"}
+{"source": "Traitement", "en": "Processing", "fr": "Traitement", "es": "Procesando", "ja": "処理中", "zh_CN": "处理中"}
+{"source": "Veuillez choisir un emplacement pour les médias", "en": "Please choose a media location", "fr": "Veuillez choisir un emplacement pour les médias", "es": "Elija una ubicación para los medios", "ja": "メディアの保存先を選択してください", "zh_CN": "请选择媒体位置"}
+{"source": "Veuillez configurer au moins un chemin", "en": "Please configure at least one path", "fr": "Veuillez configurer au moins un chemin", "es": "Configure al menos una ruta", "ja": "少なくとも1つのパスを設定してください", "zh_CN": "请至少配置一个路径"}
+{"source": "Veuillez remplir tous les champs requis", "en": "Please fill in all required fields", "fr": "Veuillez remplir tous les champs requis", "es": "Complete todos los campos obligatorios", "ja": "必須項目をすべて入力してください", "zh_CN": "请填写所有必填字段"}
+{"source": "Veuillez spécifier un chemin personnalisé", "en": "Please specify a custom path", "fr": "Veuillez spécifier un chemin personnalisé", "es": "Especifique una ruta personalizada", "ja": "カスタムパスを指定してください", "zh_CN": "请指定自定义路径"}
+{"source": "Veuillez spécifier un chemin source", "en": "Please specify a source path", "fr": "Veuillez spécifier un chemin source", "es": "Especifique una ruta de origen", "ja": "ソースパスを指定してください", "zh_CN": "请指定源路径"}
+{"source": "Vérifiez les informations ci-dessous", "en": "Check the information below", "fr": "Vérifiez les informations ci-dessous", "es": "Verifique la información a continuación", "ja": "以下の情報を確認してください", "zh_CN": "请查看以下信息"}
+{"source": "Échec", "en": "Failure", "fr": "Échec", "es": "Error", "ja": "失敗", "zh_CN": "失败"}
+{"source": "Êtes-vous sûr de vouloir annuler cet export ?", "en": "Are you sure you want to cancel this export?", "fr": "Êtes-vous sûr de vouloir annuler cet export ?", "es": "¿Seguro que desea cancelar esta exportación?", "ja": "このエクスポートをキャンセルしますか？", "zh_CN": "确定要取消此导出吗？"}
+{"source": "Êtes-vous sûr de vouloir réinitialiser tous les paramètres ?", "en": "Are you sure you want to reset all settings?", "fr": "Êtes-vous sûr de vouloir réinitialiser tous les paramètres ?", "es": "¿Seguro que desea restablecer todos los ajustes?", "ja": "すべての設定をリセットしますか？", "zh_CN": "确定要重置所有设置吗？"}
+{"source": "Cette action est irréversible.", "en": "This action cannot be undone.", "fr": "Cette action est irréversible.", "es": "Esta acción es irreversible.", "ja": "この操作は取り消せません。", "zh_CN": "此操作不可撤销。"}
+{"source": "Nom", "en": "Name", "fr": "Nom", "es": "Nombre", "ja": "名前", "zh_CN": "名称"}
+{"source": "Chemin", "en": "Path", "fr": "Chemin", "es": "Ruta", "ja": "パス", "zh_CN": "路径"}
+{"source": "Taille", "en": "Size", "fr": "Taille", "es": "Tamaño", "ja": "サイズ", "zh_CN": "大小"}
+{"source": "Nombre de médias", "en": "Number of media items", "fr": "Nombre de médias", "es": "Número de medios", "ja": "メディア数", "zh_CN": "媒体数量"}
+{"source": "Durée", "en": "Duration", "fr": "Durée", "es": "Duración", "ja": "時間", "zh_CN": "时长"}
+{"source": "Date de modification", "en": "Modified date", "fr": "Date de modification", "es": "Fecha de modificación", "ja": "更新日時", "zh_CN": "修改日期"}
+{"source": "Utilisateur", "en": "User", "fr": "Utilisateur", "es": "Usuario", "ja": "ユーザー", "zh_CN": "用户"}
+{"source": "Exécutable", "en": "Executable", "fr": "Exécutable", "es": "Ejecutable", "ja": "実行ファイル", "zh_CN": "可执行文件"}
+{"source": "Chemins", "en": "Paths", "fr": "Chemins", "es": "Rutas", "ja": "パス", "zh_CN": "路径"}
+{"source": "Médias", "en": "Media", "fr": "Médias", "es": "Medios", "ja": "メディア", "zh_CN": "媒体"}
+{"source": "Présent", "en": "Present", "fr": "Présent", "es": "Presente", "ja": "あり", "zh_CN": "存在"}
+{"source": "Manquant", "en": "Missing", "fr": "Manquant", "es": "Faltante", "ja": "なし", "zh_CN": "缺失"}
+{"source": "Vérification des fichiers", "en": "File check", "fr": "Vérification des fichiers", "es": "Verificación de archivos", "ja": "ファイル確認", "zh_CN": "文件检查"}
+{"source": "Analyse des médias", "en": "Media analysis", "fr": "Analyse des médias", "es": "Análisis de medios", "ja": "メディア分析", "zh_CN": "媒体分析"}
+{"source": "Total", "en": "Total", "fr": "Total", "es": "Total", "ja": "合計", "zh_CN": "总计"}
+{"source": "Tous les médias présents", "en": "All media present", "fr": "Tous les médias présents", "es": "Todos los medios presentes", "ja": "すべてのメディアが存在します", "zh_CN": "所有媒体均存在"}
+{"source": "fichiers manquants", "en": "missing files", "fr": "fichiers manquants", "es": "archivos faltantes", "ja": "欠落ファイル", "zh_CN": "缺失文件"}
+{"source": "templates créés", "en": "templates created", "fr": "templates créés", "es": "plantillas creadas", "ja": "作成済みテンプレート", "zh_CN": "已创建模板"}
+{"source": "fichiers traités", "en": "files processed", "fr": "fichiers traités", "es": "archivos procesados", "ja": "処理済みファイル", "zh_CN": "已处理文件"}
+{"source": "erreurs", "en": "errors", "fr": "erreurs", "es": "errores", "ja": "エラー", "zh_CN": "错误"}
+{"source": "projet", "en": "project", "fr": "projet", "es": "proyecto", "ja": "プロジェクト", "zh_CN": "项目"}
+{"source": "projets", "en": "projects", "fr": "projets", "es": "proyectos", "ja": "プロジェクト", "zh_CN": "项目"}
+{"source": "trouvé", "en": "found", "fr": "trouvé", "es": "encontrado", "ja": "見つかった", "zh_CN": "找到"}
+{"source": "trouvés", "en": "found", "fr": "trouvés", "es": "encontrados", "ja": "見つかった", "zh_CN": "找到"}
+{"source": "Temps restant", "en": "Time remaining", "fr": "Temps restant", "es": "Tiempo restante", "ja": "残り時間", "zh_CN": "剩余时间"}
+{"source": "Choisir un emplacement...", "en": "Choose a location...", "fr": "Choisir un emplacement...", "es": "Elegir una ubicación...", "ja": "場所を選択...", "zh_CN": "选择位置..."}
+{"source": "Bureau", "en": "Desktop", "fr": "Bureau", "es": "Escritorio", "ja": "デスクトップ", "zh_CN": "桌面"}
+{"source": "Documents", "en": "Documents", "fr": "Documents", "es": "Documentos", "ja": "ドキュメント", "zh_CN": "文档"}
+{"source": "Téléchargements", "en": "Downloads", "fr": "Téléchargements", "es": "Descargas", "ja": "ダウンロード", "zh_CN": "下载"}
+{"source": "Images", "en": "Pictures", "fr": "Images", "es": "Imágenes", "ja": "画像", "zh_CN": "图片"}
+{"source": "Vidéos", "en": "Videos", "fr": "Vidéos", "es": "Vídeos", "ja": "動画", "zh_CN": "视频"}
+{"source": "Musique", "en": "Music", "fr": "Musique", "es": "Música", "ja": "音楽", "zh_CN": "音乐"}
+{"source": "Prêt pour l'export", "en": "Ready for export", "fr": "Prêt pour l'export", "es": "Listo para exportar", "ja": "エクスポート準備完了", "zh_CN": "已准备好导出"}
+{"source": "Exporter", "en": "Export", "fr": "Exporter", "es": "Exportar", "ja": "エクスポート", "zh_CN": "导出"}
+{"source": "Diagnostic en cours…", "en": "Running diagnostics…", "fr": "Diagnostic en cours…", "es": "Diagnóstico en curso…", "ja": "診断中…", "zh_CN": "正在诊断…"}
+{"source": "Diagnostic en cours...", "en": "Running diagnostics...", "fr": "Diagnostic en cours...", "es": "Diagnóstico en curso...", "ja": "診断中...", "zh_CN": "正在診断..."}
+{"source": "Compression ZIP", "en": "ZIP compression", "fr": "Compression ZIP", "es": "Compresión ZIP", "ja": "ZIP 圧縮", "zh_CN": "ZIP 压缩"}
+{"source": "fichiers médias manquants", "en": "media files missing", "fr": "fichiers médias manquants", "es": "archivos multimedia faltantes", "ja": "メディアファイルが不足", "zh_CN": "缺少媒体文件"}
+{"source": "temps restant", "en": "time remaining", "fr": "temps restant", "es": "tiempo restante", "ja": "残り時間", "zh_CN": "剩余时间"}
+{"source": "Notifications", "en": "Notifications", "fr": "Notifications", "es": "Notificaciones", "ja": "通知", "zh_CN": "通知"}
+{"source": "Tout marquer comme lu", "en": "Mark all as read", "fr": "Tout marquer comme lu", "es": "Marcar todo como leído", "ja": "すべて既読にする", "zh_CN": "全部标为已读"}
+{"source": "Effacer tout", "en": "Clear all", "fr": "Effacer tout", "es": "Borrar todo", "ja": "すべて削除", "zh_CN": "清除全部"}
+{"source": "Aucune notification", "en": "No notifications", "fr": "Aucune notification", "es": "Sin notificaciones", "ja": "通知なし", "zh_CN": "暂无通知"}
+{"source": "notification", "en": "notification", "fr": "notification", "es": "notificación", "ja": "通知", "zh_CN": "条通知"}
+{"source": "notifications", "en": "notifications", "fr": "notifications", "es": "notificaciones", "ja": "件の通知", "zh_CN": "条通知"}
+{"source": "Analyse de l'installation CapCut", "en": "Analyzing CapCut installation", "fr": "Analyse de l'installation CapCut", "es": "Analizando instalación de CapCut", "ja": "CapCutのインストールを分析中", "zh_CN": "正在分析 CapCut 安装"}
+{"source": "Tout est bon !", "en": "All good!", "fr": "Tout est bon !", "es": "¡Todo bien!", "ja": "問題なし！", "zh_CN": "一切正常！"}
+{"source": "Tout devrait normalement bien fonctionner.", "en": "Everything should work properly.", "fr": "Tout devrait normalement bien fonctionner.", "es": "Todo debería funcionar correctamente.", "ja": "すべて正常に機能するはずです。", "zh_CN": "一切应该正常运行。"}
+{"source": "Fermer", "en": "Close", "fr": "Fermer", "es": "Cerrar", "ja": "閉じる", "zh_CN": "关闭"}
+{"source": "Relancer", "en": "Re-run", "fr": "Relancer", "es": "Volver a ejecutar", "ja": "再実行", "zh_CN": "重新运行"}
+{"source": "Informations système", "en": "System information", "fr": "Informations système", "es": "Información del sistema", "ja": "システム情報", "zh_CN": "系统信息"}
+{"source": "Problèmes", "en": "Issues", "fr": "Problèmes", "es": "Problemas", "ja": "問題", "zh_CN": "问题"}
+{"source": "Avertissements", "en": "Warnings", "fr": "Avertissements", "es": "Advertencias", "ja": "警告", "zh_CN": "警告"}
+{"source": "il y a quelques secondes", "en": "just now", "fr": "il y a quelques secondes", "es": "hace un momento", "ja": "たった今", "zh_CN": "刚刚"}
+{"source": "il y a", "en": "ago", "fr": "il y a", "es": "hace", "ja": "前", "zh_CN": "前"}
+{"source": "min", "en": "min", "fr": "min", "es": "min", "ja": "分", "zh_CN": "分钟"}
+{"source": "h", "en": "h", "fr": "h", "es": "h", "ja": "時間", "zh_CN": "小时"}`;
     const I18N_STORAGE_KEY = 'capcut-ui-language';
     const SUPPORTED_LANGUAGE_LABELS = {
         fr: 'Français',
@@ -1655,9 +2132,25 @@ const I18N_JSONL_EMBEDDED = `{"source": "CapCut Project Manager", "en": "CapCut 
 
         output = translateString(output, lang);
 
-        const timeMatch = output.match(/^Temps restant\s*:\s*(\d+):(\d{2})$/);
+        const timeMatch = output.match(/^temps restant\s*:\s*(\d+):(\d{2})$/i);
         if (timeMatch) {
             return `${translateString('Temps restant', lang)}: ${timeMatch[1]}:${timeMatch[2]}`;
+        }
+
+        const missingMediaMatch = output.match(/^(⚠\s*)?(\d+)\s+fichiers?\s+m[ée]dias?\s+manquants?$/i);
+        if (missingMediaMatch) {
+            const prefix = missingMediaMatch[1] || '';
+            return `${prefix}${missingMediaMatch[2]} ${translateString('fichiers médias manquants', lang)}`.trim();
+        }
+
+        const zipCompressionMatch = output.match(/^Compression ZIP:\s*(\d+)\s*\/\s*(\d+)\s*fichiers?$/i);
+        if (zipCompressionMatch) {
+            return `${translateString('Compression ZIP', lang)}: ${zipCompressionMatch[1]}/${zipCompressionMatch[2]} ${translateString('fichiers', lang)}`;
+        }
+
+        const diagMatch = output.match(/^Diagnostic en cours\.{1,3}…?$/i);
+        if (diagMatch) {
+            return translateString('Diagnostic en cours…', lang);
         }
 
         const projectCountMatch = output.match(/^(\d+)\s+projet(?:s)?\s+trouvé(?:s)?$/i);
@@ -1730,6 +2223,7 @@ const I18N_JSONL_EMBEDDED = `{"source": "CapCut Project Manager", "en": "CapCut 
                 if (!node || !node.parentElement) return NodeFilter.FILTER_REJECT;
                 const parentTag = node.parentElement.tagName;
                 if (['SCRIPT', 'STYLE', 'NOSCRIPT'].includes(parentTag)) return NodeFilter.FILTER_REJECT;
+                if (node.parentElement.closest && node.parentElement.closest('[data-i18n-skip="true"]')) return NodeFilter.FILTER_REJECT;
                 if (!node.nodeValue || !node.nodeValue.trim()) return NodeFilter.FILTER_REJECT;
                 return NodeFilter.FILTER_ACCEPT;
             }
@@ -1741,6 +2235,7 @@ const I18N_JSONL_EMBEDDED = `{"source": "CapCut Project Manager", "en": "CapCut 
 
         const attrNames = ['placeholder', 'title', 'aria-label'];
         scope.querySelectorAll('*').forEach(el => {
+            if (el.closest && el.closest('[data-i18n-skip="true"]')) return;
             attrNames.forEach(attr => {
                 if (el.hasAttribute && el.hasAttribute(attr)) {
                     cacheOriginalAttribute(el, attr);
@@ -1762,6 +2257,7 @@ const I18N_JSONL_EMBEDDED = `{"source": "CapCut Project Manager", "en": "CapCut 
                 if (!node || !node.parentElement) return NodeFilter.FILTER_REJECT;
                 const parentTag = node.parentElement.tagName;
                 if (['SCRIPT', 'STYLE', 'NOSCRIPT'].includes(parentTag)) return NodeFilter.FILTER_REJECT;
+                if (node.parentElement.closest && node.parentElement.closest('[data-i18n-skip="true"]')) return NodeFilter.FILTER_REJECT;
                 if (!node.nodeValue || !node.nodeValue.trim()) return NodeFilter.FILTER_REJECT;
                 return NodeFilter.FILTER_ACCEPT;
             }
@@ -1777,6 +2273,7 @@ const I18N_JSONL_EMBEDDED = `{"source": "CapCut Project Manager", "en": "CapCut 
 
         const attrNames = ['placeholder', 'title', 'aria-label'];
         scope.querySelectorAll('*').forEach(el => {
+            if (el.closest && el.closest('[data-i18n-skip="true"]')) return;
             attrNames.forEach(attr => {
                 if (el.hasAttribute && el.hasAttribute(attr)) {
                     const originalValue = getOriginalAttributeValue(el, attr);
@@ -1880,6 +2377,9 @@ const I18N_JSONL_EMBEDDED = `{"source": "CapCut Project Manager", "en": "CapCut 
         
         // Setup context menu
         setupContextMenu();
+
+        // Load past notifications from server
+        loadNotifications();
     });
 
     function setupContextMenu() {
@@ -1967,7 +2467,7 @@ const I18N_JSONL_EMBEDDED = `{"source": "CapCut Project Manager", "en": "CapCut 
                 data.locations.forEach(loc => {
                     const opt = document.createElement('option');
                     opt.value = loc.path;
-                    opt.textContent = loc.name;
+                    opt.textContent = translateString(loc.name);
                     select.appendChild(opt);
                 });
             }
@@ -2229,7 +2729,7 @@ const I18N_JSONL_EMBEDDED = `{"source": "CapCut Project Manager", "en": "CapCut 
 
     async function cancelCurrentExport() {
         if (!currentExportId) { hideExportModal(); resetExportModal(); return; }
-        if (!confirm('Êtes-vous sûr de vouloir annuler cet export ?')) return;
+        if (!confirm(translateString('Êtes-vous sûr de vouloir annuler cet export ?'))) return;
         try {
             const res  = await fetch('/api/cancel-export', { method:'POST', headers:{'Content-Type':'application/json'},
                 body: JSON.stringify({ export_id: currentExportId }) });
@@ -2290,7 +2790,7 @@ const I18N_JSONL_EMBEDDED = `{"source": "CapCut Project Manager", "en": "CapCut 
                 if (data.success) {
                     const sel = document.getElementById('importMediaLocation');
                     sel.innerHTML = '<option value="">' + translateString('Choisir un emplacement…') + '</option>';
-                    data.options.forEach(o => { const opt = document.createElement('option'); opt.value = o.id; opt.textContent = o.name; opt.title = o.description; sel.appendChild(opt); });
+                    data.options.forEach(o => { const opt = document.createElement('option'); opt.value = o.id; opt.textContent = translateString(o.name); opt.title = translateString(o.description || ''); sel.appendChild(opt); });
                     sel.addEventListener('change', function() {
                         const cs = document.getElementById('customMediaPathSection');
                         if (this.value === 'custom') cs.classList.remove('hidden'); else cs.classList.add('hidden');
@@ -2440,47 +2940,132 @@ const I18N_JSONL_EMBEDDED = `{"source": "CapCut Project Manager", "en": "CapCut 
 
     /* ── DIAGNOSE ─────────────────────────────────────────────────── */
     async function diagnoseInstallation() {
+        // Open the modal immediately in loading state
+        openDiagnosticModal(null);
         try {
             showToast('Diagnostic', 'Analyse de l\'installation CapCut…', 'info');
             const res  = await fetch('/api/diagnose');
             const data = await res.json();
-            if (data.success) displayDiagnosticInfo(data.diagnostic);
-            else showToast('Erreur', data.error, 'error');
-        } catch(e) { showToast('Erreur', e.message, 'error'); }
+            if (data.success) openDiagnosticModal(data.diagnostic);
+            else {
+                closeDiagnosticModal();
+                showToast('Erreur', data.error, 'error');
+            }
+        } catch(e) {
+            closeDiagnosticModal();
+            showToast('Erreur', e.message, 'error');
+        }
     }
 
-    function displayDiagnosticInfo(d) {
-        document.getElementById('systemInfo').innerHTML = `
-            <div class="info-row"><span class="label">Utilisateur</span><span class="value">${escapeHtml(d.username)}</span></div>
-            <div class="info-row"><span class="label">LOCALAPPDATA</span><span class="value">${escapeHtml(d.localappdata)}</span></div>
-            <div class="info-row"><span class="label">APPDATA</span><span class="value">${escapeHtml(d.appdata)}</span></div>
-            ${d.capcut_exe ? `<div class="info-row"><span class="label">Exécutable</span><span class="value">${escapeHtml(d.capcut_exe)}</span></div>` : ''}
-            ${d.capcut_paths?.length ? `<div class="info-row"><span class="label">Chemins</span><span class="value">${d.capcut_paths.map(p => escapeHtml(p)).join('<br>')}</span></div>` : ''}`;
+    function openDiagnosticModal(d) {
+        const modal = document.getElementById('diagModal');
+        modal.classList.remove('hidden');
 
-        const issuesList = document.getElementById('issuesList');
-        if (d.issues?.length) {
-            document.getElementById('issuesContent').innerHTML = d.issues.map(i => `• ${escapeHtml(i)}`).join('<br>');
-            issuesList.classList.remove('hidden');
-        } else issuesList.classList.add('hidden');
+        if (!d) {
+            // Loading state
+            document.getElementById('diagModalBody').innerHTML = `
+                <div class="diag-all-good" style="padding:40px 20px;">
+                    <div class="diag-all-good-icon" style="background:var(--accent-dim);color:var(--accent);">
+                        <i class="fas fa-spinner fa-spin"></i>
+                    </div>
+                    <div class="diag-all-good-title">${translateString('Diagnostic en cours…')}</div>
+                </div>`;
+            document.getElementById('diagModalIcon').className = 'diag-modal-icon';
+            document.getElementById('diagModalIcon').style.background = 'var(--accent-dim)';
+            document.getElementById('diagModalIcon').style.color = 'var(--accent)';
+            document.getElementById('diagModalIcon').innerHTML = '<i class="fas fa-stethoscope"></i>';
+            document.getElementById('diagModalTitle').textContent = translateString('Diagnostic système');
+            document.getElementById('diagModalSub').textContent = translateString('Analyse de l\'installation CapCut');
+            return;
+        }
 
-        const notesList = document.getElementById('notesList');
-        if (d.notes?.length) {
-            document.getElementById('notesContent').innerHTML = d.notes.map(n => `• ${escapeHtml(n)}`).join('<br>');
-            notesList.classList.remove('hidden');
-        } else notesList.classList.add('hidden');
+        const hasIssues   = d.issues        && d.issues.length > 0;
+        const hasWarnings = d.warnings      && d.warnings.length > 0;
+        const hasNotes    = d.notes         && d.notes.length > 0;
+        const hasRecs     = d.recommendations && d.recommendations.length > 0;
+        const allGood     = !hasIssues && !hasWarnings;
 
-        const recsList = document.getElementById('recommendationsList');
-        if (d.recommendations?.length) {
-            document.getElementById('recommendationsContent').innerHTML = d.recommendations.map(r => `• ${escapeHtml(r)}`).join('<br>');
-            recsList.classList.remove('hidden');
-        } else recsList.classList.add('hidden');
+        // Header icon
+        const iconEl = document.getElementById('diagModalIcon');
+        if (allGood) {
+            iconEl.className = 'diag-modal-icon ok';
+            iconEl.innerHTML = '<i class="fas fa-check-circle"></i>';
+            document.getElementById('diagModalTitle').textContent = translateString('Tout est bon !');
+            document.getElementById('diagModalSub').textContent = translateString('Diagnostic système');
+        } else {
+            iconEl.className = 'diag-modal-icon issues';
+            iconEl.innerHTML = '<i class="fas fa-exclamation-triangle"></i>';
+            const total = (d.issues||[]).length + (d.warnings||[]).length;
+            document.getElementById('diagModalTitle').textContent = `${total} ${translateString(total > 1 ? 'problèmes détectés' : 'problème détecté')}`;
+            document.getElementById('diagModalSub').textContent = translateString('Diagnostic système');
+        }
 
-        document.getElementById('diagnosticInfo').classList.remove('hidden');
-        document.getElementById('diagnosticInfo').classList.add('fade-in');
-        showToast('Diagnostic terminé', 'Vérifiez les informations ci-dessous', 'success');
+        let html = '';
+
+        // All-good banner
+        if (allGood) {
+            html += `
+            <div class="diag-all-good">
+                <div class="diag-all-good-icon">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <div class="diag-all-good-title">${translateString('Tout est bon !')}</div>
+                <div class="diag-all-good-sub">${translateString('Tout devrait normalement bien fonctionner.')}</div>
+            </div>`;
+        }
+
+        // Issues
+        if (hasIssues) {
+            html += `<div class="diag-section-label"><i class="fas fa-times-circle" style="color:var(--error);margin-right:4px;"></i>${translateString('Problèmes')}</div>`;
+            html += (d.issues||[]).map(i => `<div class="diag-issue-row"><i class="fas fa-times-circle"></i><span>${escapeHtml(i)}</span></div>`).join('');
+        }
+
+        // Warnings
+        if (hasWarnings) {
+            html += `<div class="diag-section-label" style="margin-top:${hasIssues?'6px':'0'};"><i class="fas fa-exclamation-triangle" style="color:var(--warning);margin-right:4px;"></i>${translateString('Avertissements')}</div>`;
+            html += (d.warnings||[]).map(w => `<div class="diag-warn-row"><i class="fas fa-exclamation-triangle"></i><span>${escapeHtml(w)}</span></div>`).join('');
+        }
+
+        // System info
+        if (d.username || d.localappdata) {
+            html += `<div class="diag-section-label" style="margin-top:${(!allGood)?'6px':'0'};"><i class="fas fa-desktop" style="color:var(--accent);margin-right:4px;"></i>${translateString('Informations système')}</div>
+            <div class="diag-sysinfo">
+                <div class="info-box-content">
+                    ${d.username ? `<div class="info-row"><span class="label">${translateString('Utilisateur')}</span><span class="value">${escapeHtml(d.username)}</span></div>` : ''}
+                    ${d.localappdata ? `<div class="info-row"><span class="label">LOCALAPPDATA</span><span class="value" style="font-size:11px;word-break:break-all;">${escapeHtml(d.localappdata)}</span></div>` : ''}
+                    ${d.appdata ? `<div class="info-row"><span class="label">APPDATA</span><span class="value" style="font-size:11px;word-break:break-all;">${escapeHtml(d.appdata)}</span></div>` : ''}
+                    ${d.capcut_exe ? `<div class="info-row"><span class="label">${translateString('Exécutable')}</span><span class="value" style="font-size:11px;word-break:break-all;">${escapeHtml(d.capcut_exe)}</span></div>` : ''}
+                    ${d.capcut_paths?.length ? `<div class="info-row"><span class="label">${translateString('Chemins')}</span><span class="value" style="font-size:11px;word-break:break-all;">${d.capcut_paths.map(p => escapeHtml(p)).join('<br>')}</span></div>` : ''}
+                </div>
+            </div>`;
+        }
+
+        // Notes
+        if (hasNotes) {
+            html += `<div class="diag-section-label"><i class="fas fa-info-circle" style="color:var(--accent);margin-right:4px;"></i>${translateString('Notes')}</div>`;
+            html += (d.notes||[]).map(n => `<div class="diag-note-row"><i class="fas fa-info-circle"></i><span>${escapeHtml(n)}</span></div>`).join('');
+        }
+
+        // Recommendations
+        if (hasRecs) {
+            html += `<div class="diag-section-label"><i class="fas fa-lightbulb" style="color:var(--success);margin-right:4px;"></i>${translateString('Recommandations')}</div>`;
+            html += (d.recommendations||[]).map(r => `<div class="diag-rec-row"><i class="fas fa-lightbulb"></i><span>${escapeHtml(r)}</span></div>`).join('');
+        }
+
+        document.getElementById('diagModalBody').innerHTML = html;
+
+        // Also update the legacy inline diagnostic section for backwards compat
+        if (document.getElementById('diagnosticInfo')) {
+            document.getElementById('diagnosticInfo').classList.add('hidden');
+        }
 
         applyI18n();
-}
+        showToast('Diagnostic terminé', allGood ? 'Tout est bon !' : `${(d.issues||[]).length + (d.warnings||[]).length} problème(s) détecté(s)`, allGood ? 'success' : 'warning');
+    }
+
+    function closeDiagnosticModal() {
+        document.getElementById('diagModal').classList.add('hidden');
+    }
 
     /* ── UI HELPERS ───────────────────────────────────────────────── */
     function showLoading() {
@@ -2544,14 +3129,17 @@ const I18N_JSONL_EMBEDDED = `{"source": "CapCut Project Manager", "en": "CapCut 
     function showToast(title, message, type = 'success') {
         const toast = document.getElementById('toast');
         const icon  = document.getElementById('toastIcon');
-        document.getElementById('toastTitle').textContent   = title;
-        document.getElementById('toastMessage').textContent = message;
+        document.getElementById('toastTitle').textContent   = translateDynamicText(title);
+        document.getElementById('toastMessage').textContent = translateDynamicText(message);
         const colors = { success: 'var(--success)', error: 'var(--error)', warning: 'var(--warning)', info: 'var(--accent)' };
         const icons  = { success: 'fa-check-circle', error: 'fa-exclamation-circle', warning: 'fa-exclamation-triangle', info: 'fa-info-circle' };
         icon.className = `fas ${icons[type]||'fa-info-circle'} toast-icon`;
         icon.style.color = colors[type] || 'var(--accent)';
         toast.classList.remove('hidden');
         setTimeout(() => toast.classList.add('hidden'), 5000);
+
+        // Record notification
+        addNotification(title, message, type);
     }
 
     async function cleanupTempFiles(tempPath) {
@@ -2663,7 +3251,7 @@ const I18N_JSONL_EMBEDDED = `{"source": "CapCut Project Manager", "en": "CapCut 
     async function deleteProject() {
         if (!contextMenuProject) return;
         
-        if (!confirm(`Êtes-vous sûr de vouloir supprimer le projet "${contextMenuProject.name}" ? Cette action est irréversible.`)) {
+        if (!confirm(`${translateString('Êtes-vous sûr de vouloir supprimer le projet')} "${contextMenuProject.name}" ? ${translateString('Cette action est irréversible.')}`)) {
             return;
         }
         
@@ -2721,14 +3309,16 @@ const I18N_JSONL_EMBEDDED = `{"source": "CapCut Project Manager", "en": "CapCut 
         const project = contextMenuProject;
         const size = formatFileSize(project.size_mb * 1024 * 1024);
         const duration = formatDuration(project.duration);
+        const localeMap = { fr: 'fr-FR', en: 'en-US', es: 'es-ES', ja: 'ja-JP', zh_CN: 'zh-CN' };
+        const locale = localeMap[currentUILanguage] || 'fr-FR';
         
         const properties = `
-Nom: ${project.name}
-Chemin: ${project.path}
-Taille: ${size}
-Nombre de médias: ${project.media_count}
-Durée: ${duration}
-Date de modification: ${new Date(project.modified_time).toLocaleString('fr-FR')}
+${translateString('Nom')}: ${project.name}
+${translateString('Chemin')}: ${project.path}
+${translateString('Taille')}: ${size}
+${translateString('Nombre de médias')}: ${project.media_count}
+${translateString('Durée')}: ${duration}
+${translateString('Date de modification')}: ${new Date(project.modified_time).toLocaleString(locale)}
         `.trim();
         
         alert(properties);
@@ -2736,6 +3326,7 @@ Date de modification: ${new Date(project.modified_time).toLocaleString('fr-FR')}
     }
 
     function hideContextMenu() {
+
         document.getElementById('contextMenu').style.display = 'none';
         contextMenuProject = null;
     }
@@ -2940,7 +3531,7 @@ Date de modification: ${new Date(project.modified_time).toLocaleString('fr-FR')}
     }
 
     async function resetSettings() {
-        if (!confirm('Êtes-vous sûr de vouloir réinitialiser tous les paramètres ?')) return;
+        if (!confirm(translateString('Êtes-vous sûr de vouloir réinitialiser tous les paramètres ?'))) return;
         
         // Default settings
         const defaultSettings = {
@@ -3039,6 +3630,178 @@ Date de modification: ${new Date(project.modified_time).toLocaleString('fr-FR')}
     function importSettings() {
         showToast('Info', 'Importation de configuration en cours de développement', 'info');
     }
+
+    /* ════════════════════════════════════════════════════════════════
+       NOTIFICATION SYSTEM
+    ════════════════════════════════════════════════════════════════ */
+    let notifications   = [];   // In-memory list
+    let unreadCount     = 0;
+    let notifPanelOpen  = false;
+
+    /** Add a notification (called by showToast) */
+    async function addNotification(title, message, type) {
+        const notif = {
+            id:        Date.now() + Math.random(),
+            title:     String(title   || ''),
+            message:   String(message || ''),
+            type:      type || 'info',
+            timestamp: new Date().toISOString(),
+            read:      false
+        };
+        notifications.unshift(notif);
+        if (notifications.length > 200) notifications.pop();
+        unreadCount++;
+        updateNotifBadge();
+        renderNotifications();
+
+        // Persist to notifs.jsonl via API (best-effort)
+        try {
+            await fetch('/api/notifications', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(notif)
+            });
+        } catch(_) { /* server may not support it yet */ }
+    }
+
+    /** Load past notifications from the server (notifs.jsonl) */
+    async function loadNotifications() {
+        try {
+            const res  = await fetch('/api/notifications');
+            if (!res.ok) return;
+            const data = await res.json();
+            if (data.success && Array.isArray(data.notifications)) {
+                // Merge: server history at the end, in-memory (new) at front
+                const existing_ids = new Set(notifications.map(n => n.id));
+                const old = data.notifications.filter(n => !existing_ids.has(n.id));
+                // Mark historical ones as read
+                old.forEach(n => { n.read = true; });
+                notifications = [...notifications, ...old];
+                if (notifications.length > 200) notifications.length = 200;
+                renderNotifications();
+                updateNotifBadge();
+            }
+        } catch(_) { /* server may not have the endpoint */ }
+    }
+
+    /** Toggle notification panel */
+    function toggleNotifications() {
+        const panel = document.getElementById('notifPanel');
+        notifPanelOpen = !notifPanelOpen;
+        panel.classList.toggle('hidden', !notifPanelOpen);
+        if (notifPanelOpen) {
+            renderNotifications();
+        }
+    }
+
+    /** Close panel when clicking outside */
+    document.addEventListener('click', function(e) {
+        if (!notifPanelOpen) return;
+        const panel  = document.getElementById('notifPanel');
+        const btn    = document.getElementById('notifBtn');
+        if (!panel.contains(e.target) && !btn.contains(e.target)) {
+            notifPanelOpen = false;
+            panel.classList.add('hidden');
+        }
+    });
+
+    /** Mark all notifications as read */
+    function markAllRead() {
+        notifications.forEach(n => { n.read = true; });
+        unreadCount = 0;
+        updateNotifBadge();
+        renderNotifications();
+    }
+
+    /** Clear all notifications */
+    async function clearAllNotifications() {
+        notifications = [];
+        unreadCount   = 0;
+        updateNotifBadge();
+        renderNotifications();
+        try {
+            await fetch('/api/notifications/clear', { method: 'POST' });
+        } catch(_) {}
+    }
+
+    /** Update the badge counter */
+    function updateNotifBadge() {
+        const badge = document.getElementById('notifBadge');
+        if (unreadCount > 0) {
+            badge.textContent = unreadCount > 99 ? '99+' : unreadCount;
+            badge.classList.remove('hidden');
+        } else {
+            badge.classList.add('hidden');
+        }
+    }
+
+    /** Relative time string */
+    function relativeTime(isoStr) {
+        const diff = Math.floor((Date.now() - new Date(isoStr).getTime()) / 1000);
+        if (diff < 60)  return translateString('il y a quelques secondes');
+        if (diff < 3600) {
+            const m = Math.floor(diff / 60);
+            return `${translateString('il y a')} ${m} ${translateString('min')}`;
+        }
+        if (diff < 86400) {
+            const h = Math.floor(diff / 3600);
+            return `${translateString('il y a')} ${h}${translateString('h')}`;
+        }
+        const localeMap = { fr:'fr-FR', en:'en-US', es:'es-ES', ja:'ja-JP', zh_CN:'zh-CN' };
+        return new Date(isoStr).toLocaleDateString(localeMap[currentUILanguage]||'fr-FR', { day:'numeric', month:'short' });
+    }
+
+    /** Render the notification list */
+    function renderNotifications() {
+        const list  = document.getElementById('notifList');
+        const empty = document.getElementById('notifEmpty');
+        const countLabel = document.getElementById('notifCountLabel');
+        const iconMap = { success:'fa-check-circle', error:'fa-exclamation-circle', warning:'fa-exclamation-triangle', info:'fa-info-circle' };
+
+        if (!notifications.length) {
+            empty.style.display = 'block';
+            empty.textContent = '';
+            const ic = document.createElement('i');
+            ic.className = 'fas fa-bell-slash';
+            const txt = document.createElement('span');
+            txt.style.display = 'block';
+            txt.textContent = translateString('Aucune notification');
+            empty.appendChild(ic);
+            empty.appendChild(txt);
+            countLabel.textContent = '';
+            return;
+        }
+
+        empty.style.display = 'none';
+
+        // Remove existing items (keep empty div)
+        list.querySelectorAll('.notif-item').forEach(el => el.remove());
+
+        notifications.forEach(n => {
+            const el = document.createElement('div');
+            el.className = 'notif-item' + (n.read ? '' : ' unread');
+            el.innerHTML = `
+                <div class="notif-icon ${n.type}">
+                    <i class="fas ${iconMap[n.type]||'fa-info-circle'}"></i>
+                </div>
+                <div class="notif-item-body">
+                    <div class="notif-item-title">${escapeHtml(translateDynamicText(n.title))}</div>
+                    <div class="notif-item-msg">${escapeHtml(translateDynamicText(n.message))}</div>
+                    <div class="notif-item-time">${relativeTime(n.timestamp)}</div>
+                </div>`;
+            el.onclick = () => { n.read = true; el.classList.remove('unread'); unreadCount = notifications.filter(x=>!x.read).length; updateNotifBadge(); };
+            list.insertBefore(el, empty);
+        });
+
+        const total = notifications.length;
+        const word  = total > 1 ? translateString('notifications') : translateString('notification');
+        countLabel.textContent = `${total} ${word}`;
+    }
+
+    /* Close diagnostic modal on overlay click */
+    document.getElementById('diagModal').addEventListener('click', function(e) {
+        if (e.target === this) closeDiagnosticModal();
+    });
 </script>
 </body>
 </html>
