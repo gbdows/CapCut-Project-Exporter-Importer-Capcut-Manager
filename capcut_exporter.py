@@ -14,7 +14,6 @@ from datetime import datetime
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple
 import logging
-import hashlib  
 
 # Configure comprehensive logging
 def setup_logging():
@@ -48,129 +47,6 @@ class CapCutExporter:
             'audio': ['.mp3', '.wav', '.aac', '.ogg', '.flac', '.m4a'],
             'image': ['.jpg', '.jpeg', '.png', '.gif', '.bmp', '.tiff', '.webp']
         }
-
-
-    def _is_path_like_key(self, key: str) -> bool:
-        if not isinstance(key, str):
-            return False
-        lower = key.lower()
-        return lower.endswith('path') or lower.endswith('_path') or lower.endswith('filepath') or lower == 'file_path'
-
-    def _looks_like_path_value(self, value: str) -> bool:
-        if not isinstance(value, str):
-            return False
-        candidate = value.strip()
-        if not candidate:
-            return False
-        normalized = candidate.replace('\\', '/')
-        return (
-            normalized.startswith(('./', '../', '/', '~/', '.\\', '..\\'))
-            or (len(normalized) > 1 and normalized[1] == ':')
-            or normalized.startswith('file:///')
-        )
-
-    def _abspath_norm(self, path_value: str) -> str:
-        return os.path.abspath(path_value).replace('\\', '/')
-
-    def _resolve_export_path(self, original: str, project_folder: str, medias_folder: str, key: str | None = None) -> str:
-        """Convert any source path into a portable relative path inside the export bundle."""
-        if not isinstance(original, str):
-            return original
-
-        stripped = original.strip()
-        if not stripped:
-            return stripped
-
-        normalized = stripped.replace('\\', '/')
-
-        structural = {
-            'draft_root_path': './',
-            'draft_fold_path': './project',
-            'draft_cover': './project/draft_cover.jpg',
-            'draft_removable_storage_device_path': '',
-        }
-        if key in structural:
-            return structural[key]
-
-        # Already portable.
-        if normalized.startswith('./medias/') or normalized.startswith('medias/'):
-            if normalized.startswith('./'):
-                return normalized
-            return './' + normalized
-
-        if normalized.startswith('./project/') or normalized.startswith('project/'):
-            if normalized.startswith('./'):
-                return normalized
-            return './' + normalized
-
-        # Absolute path or path-like reference: try to map it inside the bundle.
-        filename = os.path.basename(normalized)
-        media_other = os.path.join(medias_folder, 'other', filename)
-        media_main = os.path.join(medias_folder, filename)
-
-        if os.path.exists(media_other):
-            return './medias/other/' + os.path.basename(media_other)
-        if os.path.exists(media_main):
-            return './medias/' + os.path.basename(media_main)
-
-        # Keep paths internal to the copied project tree relative to ./project.
-        if os.path.exists(os.path.join(project_folder, filename)):
-            return './project/' + filename
-
-        if os.path.isabs(stripped) or (len(normalized) > 1 and normalized[1] == ':'):
-            return './medias/' + filename
-
-        if key is not None and self._is_path_like_key(key):
-            return './project/' + normalized.lstrip('./').lstrip('.\\')
-
-        return stripped
-
-    def _rewrite_exported_project_jsons(self, project_folder: str, medias_folder: str) -> int:
-        """Rewrite every JSON file under project/ to use portable relative paths."""
-        rewritten_files = 0
-
-        for root, _, files in os.walk(project_folder):
-            for filename in files:
-                if not filename.lower().endswith('.json'):
-                    continue
-
-                json_path = os.path.join(root, filename)
-                try:
-                    with open(json_path, 'r', encoding='utf-8') as f:
-                        data = json.load(f)
-                except Exception as e:
-                    logger.warning(f"Skipping unreadable JSON during export rewrite: {json_path} ({e})")
-                    continue
-
-                changed = 0
-
-                def walk(obj):
-                    nonlocal changed
-                    if isinstance(obj, dict):
-                        for key, value in obj.items():
-                            if isinstance(value, str) and (self._is_path_like_key(key) or self._looks_like_path_value(value)):
-                                new_value = self._resolve_export_path(value, project_folder, medias_folder, key)
-                                if new_value != value:
-                                    obj[key] = new_value
-                                    changed += 1
-                            else:
-                                walk(value)
-                    elif isinstance(obj, list):
-                        for item in obj:
-                            walk(item)
-
-                walk(data)
-
-                if changed:
-                    try:
-                        with open(json_path, 'w', encoding='utf-8') as f:
-                            json.dump(data, f, indent=2, ensure_ascii=False)
-                        rewritten_files += 1
-                        logger.info(f"JSON export rewritten: {json_path} ({changed} path(s))")
-                    except Exception as e:
-                        logger.error(f"Failed to save rewritten JSON {json_path}: {e}")
-
-        return rewritten_files
     
     def find_capcut_projects(self) -> List[str]:
         """Find all CapCut project folders in AppData with automatic user detection"""
@@ -575,23 +451,17 @@ class CapCutExporter:
             logger.debug(f"Processing {media_type}: {len(media_list)} items")
             
             for i, media_item in enumerate(media_list):
-                path_value      = media_item.get('path', '').strip()
-                file_path_value = media_item.get('file_Path', '').strip()
-
-                # Choisir le meilleur chemin source disponible
-                if path_value and os.path.exists(path_value):
-                    original_path = path_value
-                elif file_path_value and os.path.exists(file_path_value):
-                    original_path = file_path_value
-                    logger.debug(f"  Item {i+1}: path absent/introuvable, utilisation de file_Path: {file_path_value}")
-                elif path_value or file_path_value:
-                    logger.warning(f"Media file not found (path={path_value!r}, file_Path={file_path_value!r})")
-                    continue
-                else:
-                    logger.debug(f"  Skipping item {i+1}: no path or file_Path")
-                    continue
-
+                original_path = media_item.get('path', '')
                 logger.debug(f"  Item {i+1}: {original_path}")
+                
+                if not original_path:
+                    logger.debug(f"  Skipping item {i+1}: no path")
+                    continue
+                
+                if not os.path.exists(original_path):
+                    logger.warning(f"Media file not found: {original_path}")
+                    logger.debug(f"  Item details: {media_item}")
+                    continue
                 
                 # Check if this file was already copied
                 if original_path in copied_original_paths:
@@ -633,8 +503,9 @@ class CapCutExporter:
                     
                     # CORRECTION : mettre à jour 'path' ET 'file_Path' pour éviter que
                     # CapCut utilise file_Path comme fallback vers le fichier original.
-                    media_item['path']      = f"./medias/{filename}"
-                    media_item['file_Path'] = f"./medias/{filename}"
+                    media_item['path'] = f"./medias/{filename}"
+                    if 'file_Path' in media_item and media_item['file_Path']:
+                        media_item['file_Path'] = f"./medias/{filename}"
                     logger.debug(f"  Updated path in JSON: {media_item['path']}")
                     
                     logger.info(f"Copied: {original_path} -> {filename}")
@@ -894,155 +765,65 @@ class CapCutExporter:
         logger.info(f"Extracted {len(copied_files)} effect files to ./medias/other/, updated {paths_updated} paths")
         return copied_files, data
     
-
-
     def _make_all_paths_relative(self, data: Dict, medias_folder: str) -> Dict:
         """
         Parcourt RÉCURSIVEMENT tout le JSON et remplace TOUS les chemins absolus
         par des chemins relatifs ./medias/... si le fichier existe dans medias_folder.
 
-        Pour les chemins non résolus par nom, tente une correspondance par contenu
-        (taille puis hash MD5) afin de retrouver les copies renommées.
+        Passe de nettoyage finale : rattrape tout chemin oublié par les passes précédentes.
+        Si un fichier absolu n'est pas trouvé dans medias_folder, un avertissement est émis
+        (le chemin restera absolu — ce cas doit idéalement être corrigé dans l'exporteur).
         """
         remaining_absolute = []
 
-        # ── Cache des fichiers présents dans medias/ et medias/other/ ────────────
-        # Construit une fois, réutilisé pour chaque chemin non résolu.
-        # Structure : { chemin_absolu_fichier: chemin_relatif_./medias/... }
-        _media_index: dict[str, str] = {}
-        for root, _, files in os.walk(medias_folder):
-            for fname in files:
-                full = os.path.join(root, fname)
-                # Chemin relatif ./medias/... ou ./medias/other/...
-                rel = './' + os.path.relpath(full, os.path.dirname(medias_folder)).replace('\\', '/')
-                _media_index[full] = rel
-
-        # ── Index par taille : { taille_octets: [chemins_absolus_dans_medias] } ──
-        _size_index: dict[int, list[str]] = {}
-        for full_path in _media_index:
-            try:
-                sz = os.path.getsize(full_path)
-                _size_index.setdefault(sz, []).append(full_path)
-            except OSError:
-                pass
-
-        def _md5(path: str) -> str | None:
-            """Calcule le MD5 d'un fichier, retourne None si inaccessible."""
-            try:
-                h = hashlib.md5()
-                with open(path, 'rb') as fh:
-                    for chunk in iter(lambda: fh.read(65536), b''):
-                        h.update(chunk)
-                return h.hexdigest()
-            except OSError:
-                return None
-
-        def _find_equivalent_in_medias(original_path: str) -> str | None:
-            """
-            Cherche dans medias_folder un fichier au contenu identique à original_path.
-            Stratégie :
-            1. Correspondance exacte par nom de fichier (déjà tentée avant d'appeler cette fn)
-            2. Correspondance par taille → si unique : retourner directement
-            3. Si plusieurs candidats de même taille : affiner par hash MD5
-            Retourne le chemin relatif ./medias/... ou None si aucun équivalent trouvé.
-            """
-            if not os.path.isfile(original_path):
-                return None  # Fichier source inaccessible, impossible de comparer
-
-            try:
-                orig_size = os.path.getsize(original_path)
-            except OSError:
-                return None
-
-            candidates = _size_index.get(orig_size, [])
-
-            if not candidates:
-                return None  # Aucun fichier de même taille dans medias/
-
-            if len(candidates) == 1:
-                # Un seul candidat de même taille → très probable que ce soit le même
-                logger.debug(
-                    f"[_make_all_paths_relative] Correspondance par taille : "
-                    f"{original_path} → {_media_index[candidates[0]]}"
-                )
-                return _media_index[candidates[0]]
-
-            # Plusieurs candidats → départager par hash MD5
-            orig_hash = _md5(original_path)
-            if orig_hash is None:
-                return None  # Impossible de lire l'original
-
-            for candidate in candidates:
-                if _md5(candidate) == orig_hash:
-                    logger.debug(
-                        f"[_make_all_paths_relative] Correspondance par hash MD5 : "
-                        f"{original_path} → {_media_index[candidate]}"
-                    )
-                    return _media_index[candidate]
-
-            return None  # Même taille mais contenu différent (collision improbable mais gérée)
-
-        # ── Parcours récursif du JSON ─────────────────────────────────────────────
         def walk(obj):
             if isinstance(obj, dict):
                 for key, value in obj.items():
                     if key in ['path', 'file_Path'] and isinstance(value, str) and value.strip():
+                        # Si c'est déjà un chemin relatif ./, on le garde
                         if value.startswith('./'):
-                            continue  # Déjà relatif, rien à faire
-
+                            continue
+                        
+                        # Vérifier si le fichier existe dans medias_folder
                         filename = os.path.basename(value)
-
-                        # 1. Correspondance exacte par nom dans medias/
                         media_path = os.path.join(medias_folder, filename)
                         if os.path.exists(media_path):
                             obj[key] = f"./medias/{filename}"
-                            logger.debug(f"Made relative (nom exact): {value} -> ./medias/{filename}")
+                            logger.debug(f"Made relative: {value} -> ./medias/{filename}")
                             continue
-
-                        # 2. Correspondance exacte par nom dans medias/other/
+                        
+                        # Vérifier si le fichier existe dans medias/other/
                         other_path = os.path.join(medias_folder, 'other', filename)
                         if os.path.exists(other_path):
                             obj[key] = f"./medias/other/{filename}"
-                            logger.debug(f"Made relative (nom exact other): {value} -> ./medias/other/{filename}")
+                            logger.debug(f"Made relative (other): {value} -> ./medias/other/{filename}")
                             continue
 
-                        # 3. Correspondance par contenu (copies renommées)
-                        if len(value) > 1 and value[1] == ':':  # Chemin absolu Windows accessible
-                            equiv = _find_equivalent_in_medias(value)
-                            if equiv is not None:
-                                obj[key] = equiv
-                                logger.info(
-                                    f"[_make_all_paths_relative] Équivalent trouvé par contenu : "
-                                    f"{value!r} → {equiv!r}"
-                                )
-                                continue
-
-                        # 4. Aucun équivalent trouvé : forcer quand même un chemin portable
-                        #    pour éviter que CapCut utilise silencieusement le fichier original.
+                        # Chemin absolu non résolu : logguer comme avertissement
                         if len(value) > 1 and value[1] == ':':
-                            fallback = f"./medias/{filename}"
-                            remaining_absolute.append(f"{key}: {value} (→ fallback {fallback})")
+                            remaining_absolute.append(f"{key}: {value}")
                             logger.warning(
-                                f"[_make_all_paths_relative] Aucun équivalent dans le paquet — "
-                                f"chemin forcé vers portable (fichier sera manquant à l'import) : "
-                                f"{key}: {value!r} → {fallback!r}"
+                                f"[_make_all_paths_relative] Chemin absolu non résolu "
+                                f"(fichier absent du paquet) — {key}: {value}"
                             )
-                            obj[key] = fallback  # ← on écrase quand même, jamais de chemin original dans le ZIP
+                            new_path = os.path.abspath(os.path.join(medias_folder, filename)).replace('\\', '/')
+                            obj[key] = f"./medias/{filename}"
                     else:
                         walk(value)
             elif isinstance(obj, list):
                 for item in obj:
                     walk(item)
-
+        
         walk(data)
 
         if remaining_absolute:
             logger.warning(
-                f"{len(remaining_absolute)} chemin(s) sans équivalent dans le paquet portable. "
-                f"Ces médias seront signalés comme manquants par CapCut à l'ouverture."
+                f"{len(remaining_absolute)} chemin(s) absolu(s) non résolu(s) dans le JSON exporté. "
+                f"Ces chemins pointent vers des fichiers qui n'ont pas été copiés dans le paquet portable. "
+                f"L'importeur redirigera automatiquement vers le répertoire portable."
             )
         else:
-            logger.info("Tous les chemins absolus ont été résolus (par nom ou par contenu).")
+            logger.info("Tous les chemins absolus ont été résolus en chemins relatifs.")
 
         return data
 
@@ -1250,10 +1031,6 @@ class CapCutExporter:
             logger.debug("Starting to copy all project files...")
             additional_files_copied = self.copy_all_project_files(project_path, project_folder, progress_callback, len(copied_files))
             logger.info(f"Copied {additional_files_copied} additional project files")
-
-            # Final pass: make every JSON path inside the exported project portable
-            rewritten_json_files = self._rewrite_exported_project_jsons(project_folder, medias_folder)
-            logger.info(f"Rewritten portable paths in {rewritten_json_files} JSON file(s)")
             
             # Create export_info.json
             export_info_path = os.path.join(output_folder, 'export_info.json')
