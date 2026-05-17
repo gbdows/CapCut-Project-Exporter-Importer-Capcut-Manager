@@ -1544,6 +1544,53 @@ def diagnose_capcut():
             'error': str(e)
         }), 500
 
+@app.route('/api/notifications', methods=['GET'])
+def get_notifications():
+    """Load notifications from notifs.jsonl"""
+    try:
+        notifs = []
+        notifs_file = 'notifs.jsonl'
+        if os.path.exists(notifs_file):
+            with open(notifs_file, 'r', encoding='utf-8') as f:
+                for line in f:
+                    line = line.strip()
+                    if line:
+                        try:
+                            notifs.append(json.loads(line))
+                        except json.JSONDecodeError:
+                            pass
+        # Return most recent first (reverse chronological)
+        notifs.reverse()
+        return jsonify({'success': True, 'notifications': notifs})
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+@app.route('/api/notifications', methods=['POST'])
+def save_notification():
+    """Append a notification to notifs.jsonl"""
+    try:
+        notif = request.get_json()
+        if not notif:
+            return jsonify({'success': False, 'error': 'No notification data'}), 400
+        # Add server-side timestamp if missing
+        if 'timestamp' not in notif:
+            notif['timestamp'] = datetime.utcnow().isoformat() + 'Z'
+        with open('notifs.jsonl', 'a', encoding='utf-8') as f:
+            f.write(json.dumps(notif, ensure_ascii=False) + '\n')
+        return jsonify({'success': True})
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+@app.route('/api/notifications/clear', methods=['POST'])
+def clear_notifications():
+    """Clear all notifications from notifs.jsonl"""
+    try:
+        with open('notifs.jsonl', 'w', encoding='utf-8') as f:
+            pass  # truncate
+        return jsonify({'success': True})
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)}), 500
+
 @app.errorhandler(404)
 def not_found(error):
     return jsonify({'success': False, 'error': 'File not found'}), 404
